@@ -1,0 +1,177 @@
+// Catálogo inicial. Cada produto aceita `image` (URL ou /public/...) —
+// se estiver vazio, o site desenha a ilustração do tipo automaticamente.
+export const SEED_PRODUCTS = [
+  {
+    id: 'p01',
+    nome: 'Batom Matte Veludo',
+    marca: 'Aura',
+    categoria: 'labios',
+    tipo: 'batom',
+    tom: '#A8343C',
+    preco: 68.9,
+    desconto: 0,
+    estoque: 14,
+    selo: 'Novo',
+    image: '',
+    descricao:
+      'Acabamento matte aveludado com 8h de permanência. Textura leve, não resseca e constrói cor em camadas.'
+  },
+  {
+    id: 'p02',
+    nome: 'Paleta Nude Essencial 12 cores',
+    marca: 'Aura',
+    categoria: 'olhos',
+    tipo: 'paleta',
+    tom: '#B07A5E',
+    preco: 139.9,
+    desconto: 15,
+    estoque: 6,
+    selo: '',
+    image: '',
+    descricao:
+      'Doze tons entre mates e cintilantes para o olhar do dia a dia ao da noite. Alta pigmentação e baixa queda.'
+  },
+  {
+    id: 'p03',
+    nome: 'Base Fluida Segunda Pele FPS 30',
+    marca: 'Aura',
+    categoria: 'pele',
+    tipo: 'base',
+    tom: '#D7A77E',
+    preco: 119.9,
+    desconto: 0,
+    estoque: 9,
+    selo: 'Mais vendido',
+    image: '',
+    descricao:
+      'Cobertura construível com efeito natural, proteção solar FPS 30 e ácido hialurônico na fórmula.'
+  },
+  {
+    id: 'p04',
+    nome: 'Máscara de Cílios Volume Extremo',
+    marca: 'Aura',
+    categoria: 'olhos',
+    tipo: 'mascara',
+    tom: '#1F1B19',
+    preco: 79.9,
+    desconto: 0,
+    estoque: 0,
+    selo: '',
+    image: '',
+    descricao:
+      'Escova curva que separa e alonga. Fórmula à prova de borrões, remove com água morna.'
+  },
+  {
+    id: 'p05',
+    nome: 'Blush Compacto Pêssego',
+    marca: 'Aura',
+    categoria: 'pele',
+    tipo: 'blush',
+    tom: '#E08A79',
+    preco: 59.9,
+    desconto: 20,
+    estoque: 21,
+    selo: '',
+    image: '',
+    descricao: 'Pó sedoso com brilho sutil, fácil de esfumar e com fixação de longa duração.'
+  },
+  {
+    id: 'p06',
+    nome: 'Kit 5 Pincéis Profissionais',
+    marca: 'Aura',
+    categoria: 'pinceis',
+    tipo: 'pincel',
+    tom: '#C3A26B',
+    preco: 189.9,
+    desconto: 0,
+    estoque: 4,
+    selo: 'Novo',
+    image: '',
+    descricao:
+      'Cerdas sintéticas macias, cabo em madeira e virola dourada. Inclui estojo para viagem.'
+  },
+  {
+    id: 'p07',
+    nome: 'Gloss Labial Espelhado',
+    marca: 'Aura',
+    categoria: 'labios',
+    tipo: 'gloss',
+    tom: '#D98BA0',
+    preco: 49.9,
+    desconto: 0,
+    estoque: 18,
+    selo: '',
+    image: '',
+    descricao: 'Brilho de vidro, textura não pegajosa e óleo de jojoba para hidratar os lábios.'
+  },
+  {
+    id: 'p08',
+    nome: 'Sérum Vitamina C 10%',
+    marca: 'Aura Care',
+    categoria: 'skincare',
+    tipo: 'serum',
+    tom: '#E8B45C',
+    preco: 149.9,
+    desconto: 10,
+    estoque: 7,
+    selo: '',
+    image: '',
+    descricao: 'Antioxidante que uniformiza o tom e devolve viço. Uso pela manhã, antes do protetor.'
+  },
+  {
+    id: 'p09',
+    nome: 'Hidratante Facial Calmante',
+    marca: 'Aura Care',
+    categoria: 'skincare',
+    tipo: 'creme',
+    tom: '#BFD6CC',
+    preco: 98.9,
+    desconto: 0,
+    estoque: 11,
+    selo: '',
+    image: '',
+    descricao: 'Textura em gel-creme com pantenol e aveia, indicada para peles sensíveis.'
+  },
+  {
+    id: 'p10',
+    nome: 'Pó Translúcido Fixador',
+    marca: 'Aura',
+    categoria: 'pele',
+    tipo: 'po',
+    tom: '#EBD9C8',
+    preco: 89.9,
+    desconto: 0,
+    estoque: 3,
+    selo: '',
+    image: '',
+    descricao: 'Partículas ultrafinas que selam a maquiagem sem deixar aspecto seco ou acinzentado.'
+  },
+  {
+    id: 'p11',
+    nome: 'Delineador Caneta Preto Intenso',
+    marca: 'Aura',
+    categoria: 'olhos',
+    tipo: 'delineador',
+    tom: '#17120F',
+    preco: 54.9,
+    desconto: 0,
+    estoque: 16,
+    selo: '',
+    image: '',
+    descricao: 'Ponta fina e flexível para traços precisos. Secagem rápida e resistente à água.'
+  },
+  {
+    id: 'p12',
+    nome: 'Batom Líquido Rosé Mate',
+    marca: 'Aura',
+    categoria: 'labios',
+    tipo: 'batom',
+    tom: '#C2847A',
+    preco: 72.9,
+    desconto: 25,
+    estoque: 8,
+    selo: '',
+    image: '',
+    descricao: 'Aplicador de precisão, cor intensa em uma passada e conforto de uso prolongado.'
+  }
+]

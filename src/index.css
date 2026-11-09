@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-cream text-ink font-sans antialiased;
+  }
+  ::selection {
+    @apply bg-clay text-ink;
+  }
+}
+
+@layer components {
+  .wrap {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-6;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition active:scale-[.98];
+  }
+  .btn-dark {
+    @apply btn bg-ink text-cream hover:bg-ink/90;
+  }
+  .btn-rose {
+    @apply btn bg-rose text-white hover:bg-rosedeep;
+  }
+  .btn-ghost {
+    @apply btn border border-clay bg-white/60 text-ink hover:bg-white;
+  }
+  .field {
+    @apply w-full rounded-xl border border-clay bg-white px-3.5 py-2.5 text-sm outline-none transition placeholder:text-mute/60 focus:border-rose focus:ring-2 focus:ring-rose/20;
+  }
+  .label {
+    @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-mute;
+  }
+  .card {
+    @apply rounded-xl2 border border-clay/70 bg-white shadow-soft;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium tracking-wide;
+  }
+}
+
+/* scrollbar discreto no painel */
+.thin-scroll::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: #e3d3c8;
+  border-radius: 99px;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-fade-up {
+  animation: fade-up 0.5s ease both;
+}
