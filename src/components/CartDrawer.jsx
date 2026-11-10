@@ -1,73 +1,110 @@
-import { useEffect, useState } from 'react'
-import { PAGAMENTOS, STORE } from '../config'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { ENTREGAS, PAGAMENTOS, STORE } from '../config'
 import { brl, useLoja } from '../store/StoreContext'
 import { abrirWhats } from '../whatsapp'
 import Drawer from './Drawer'
 import ProductArt from './ProductArt'
 import { Check, Lixo, Mais, Menos, Sacola, Whats, X } from './Icons'
 
-const ENTREGAS = [
-  { id: 'regiao', titulo: `Entrega em ${STORE.regiao}`, nota: 'Combinamos o horário pelo WhatsApp', preco: 10 },
-  { id: 'brasil', titulo: 'Envio para todo o Brasil', nota: 'Correios ou transportadora', preco: 24.9 },
-  { id: 'retirada', titulo: 'Retirar com a vendedora', nota: 'Sem custo', preco: 0 }
-]
-
 // dados do cliente ficam guardados no aparelho para a próxima compra
 const CHAVE_CLIENTE = 'aura:cliente'
-const lerCliente = () => {
+// o cupom de boas-vindas vale uma vez por aparelho
+const CHAVE_CUPOM = 'aura:cupom-usado'
+// último pedido enviado (lido pela tela de confirmação)
+export const CHAVE_PEDIDO = 'aura:ultimo-pedido'
+
+const ler = (chave, padrao) => {
   try {
-    return { nome: '', endereco: '', pagamento: 'Pix', ...JSON.parse(localStorage.getItem(CHAVE_CLIENTE) || '{}') }
+    return JSON.parse(localStorage.getItem(chave)) ?? padrao
   } catch {
-    return { nome: '', endereco: '', pagamento: 'Pix' }
+    return padrao
+  }
+}
+const gravar = (chave, valor) => {
+  try {
+    localStorage.setItem(chave, JSON.stringify(valor))
+  } catch {
+    /* sem armazenamento — segue normalmente */
   }
 }
 
-const codigoPedido = () => Math.random().toString(36).slice(2, 6).toUpperCase()
+const codigoPedido = () => Math.random().toString(36).slice(2, 6).toUpperCase().padEnd(4, '7')
 
 export default function CartDrawer({ aberto, aoFechar }) {
   const { itensCarrinho, totalCarrinho, mudarQtd, limparCarrinho } = useLoja()
+  const nav = useNavigate()
   const [entrega, setEntrega] = useState('regiao')
-  const [cliente, setCliente] = useState(lerCliente)
+  const [cliente, setCliente] = useState(() => ({ nome: '', endereco: '', pagamento: 'Pix', ...ler(CHAVE_CLIENTE, {}) }))
   const [cupomTexto, setCupomTexto] = useState('')
   const [cupom, setCupom] = useState(null) // código aplicado
   const [erroCupom, setErroCupom] = useState('')
-  const [enviado, setEnviado] = useState(false)
+  const [erros, setErros] = useState({})
+  const nomeRef = useRef(null)
+  const enderecoRef = useRef(null)
 
-  useEffect(() => {
-    try {
-      localStorage.setItem(CHAVE_CLIENTE, JSON.stringify(cliente))
-    } catch {
-      /* sem armazenamento — segue normalmente */
-    }
-  }, [cliente])
-
-  // se a sacola mudar depois de abrir o WhatsApp, o pedido precisa ser enviado de novo
-  useEffect(() => setEnviado(false), [totalCarrinho])
+  useEffect(() => gravar(CHAVE_CLIENTE, cliente), [cliente])
 
   const opcao = ENTREGAS.find((e) => e.id === entrega)
   const pagamentos = entrega === 'brasil' ? PAGAMENTOS.filter((p) => p !== 'Dinheiro') : PAGAMENTOS
   const pagamento = pagamentos.includes(cliente.pagamento) ? cliente.pagamento : 'Pix'
-  const precisaEndereco = entrega !== 'retirada'
+  // em entrega ou envio, nome e endereço são obrigatórios; na retirada, opcionais
+  const obrigatorio = entrega !== 'retirada'
 
   const gratis = totalCarrinho >= STORE.freteGratisAcima && entrega !== 'retirada'
   const frete = gratis ? 0 : opcao.preco
-  const desconto = cupom ? Number(((totalCarrinho * STORE.cupomDesconto) / 100).toFixed(2)) : 0
+  // o cupom só incide sobre itens que não estão em Sale
+  const baseCupom = itensCarrinho.filter((i) => !(i.desconto > 0)).reduce((s, i) => s + i.precoFinal * i.qtd, 0)
+  const temItemEmSale = itensCarrinho.some((i) => i.desconto > 0)
+  const desconto = cupom ? Number(((baseCupom * STORE.cupomDesconto) / 100).toFixed(2)) : 0
   const total = totalCarrinho - desconto + frete
   const faltaPraFrete = Math.max(0, STORE.freteGratisAcima - totalCarrinho)
 
-  const set = (campo) => (e) => setCliente((c) => ({ ...c, [campo]: e.target.value }))
+  // se a sacola ficar só com itens em Sale, o cupom deixa de valer
+  useEffect(() => {
+    if (cupom && baseCupom === 0) setCupom(null)
+  }, [cupom, baseCupom])
+
+  const set = (campo) => (e) => {
+    setCliente((c) => ({ ...c, [campo]: e.target.value }))
+    setErros((er) => ({ ...er, [campo]: '' }))
+  }
 
   const aplicarCupom = (e) => {
     e.preventDefault()
-    if (cupomTexto.trim().toUpperCase() === STORE.cupomBoasVindas.toUpperCase()) {
+    if (cupomTexto.trim().toUpperCase() !== STORE.cupomBoasVindas.toUpperCase()) {
+      setErroCupom('Cupom não encontrado. Confira se digitou certo.')
+    } else if (ler(CHAVE_CUPOM, false)) {
+      setErroCupom('Esse cupom vale só na primeira compra e já foi usado neste aparelho.')
+    } else if (baseCupom === 0) {
+      setErroCupom('O cupom não acumula com itens em Sale. Adicione um item sem desconto para usar.')
+    } else {
       setCupom(STORE.cupomBoasVindas)
       setErroCupom('')
-    } else {
-      setErroCupom('Cupom não encontrado.')
     }
   }
 
   const finalizar = () => {
+    if (obrigatorio) {
+      const faltando = {
+        nome: cliente.nome.trim().length < 2 ? 'Informe seu nome para a entrega.' : '',
+        endereco:
+          cliente.endereco.trim().length < 8
+            ? entrega === 'brasil'
+              ? 'Informe o endereço completo com CEP.'
+              : 'Informe rua, número e bairro.'
+            : ''
+      }
+      if (faltando.nome || faltando.endereco) {
+        setErros(faltando)
+        const alvo = faltando.nome ? nomeRef.current : enderecoRef.current
+        alvo?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+        alvo?.focus({ preventScroll: true })
+        return
+      }
+    }
+
+    const codigo = codigoPedido()
     const itens = itensCarrinho
       .map((i) =>
         i.qtd > 1
@@ -85,7 +122,7 @@ export default function CartDrawer({ aberto, aoFechar }) {
 
     const dados = [
       `🚚 *Entrega:* ${opcao.titulo}`,
-      precisaEndereco && cliente.endereco.trim() && `📍 *Endereço:* ${cliente.endereco.trim()}`,
+      obrigatorio && `📍 *Endereço:* ${cliente.endereco.trim()}`,
       `💳 *Pagamento:* ${pagamento}`,
       cliente.nome.trim() && `🙋 *Nome:* ${cliente.nome.trim()}`
     ]
@@ -93,7 +130,7 @@ export default function CartDrawer({ aberto, aoFechar }) {
     const texto = [
       `Olá! 😊 Quero fazer um pedido pelo site da *${STORE.nome}*.`,
       '',
-      `🛍️ *Pedido #${codigoPedido()}*`,
+      `🛍️ *Pedido #${codigo}*`,
       itens,
       '',
       ...valores.filter(Boolean),
@@ -103,15 +140,29 @@ export default function CartDrawer({ aberto, aoFechar }) {
       'Pode confirmar a disponibilidade e o prazo? Fico no aguardo! 💕'
     ].join('\n')
 
+    gravar(CHAVE_PEDIDO, {
+      codigo,
+      texto,
+      total,
+      entrega: opcao.titulo,
+      pagamento,
+      itens: itensCarrinho.map((i) => ({ id: i.id, nome: i.nome, qtd: i.qtd, valor: i.precoFinal * i.qtd })),
+      data: new Date().toISOString()
+    })
+    if (cupom) gravar(CHAVE_CUPOM, true)
+
     abrirWhats(texto)
-    setEnviado(true)
+    limparCarrinho()
+    setCupom(null)
+    setCupomTexto('')
+    aoFechar()
+    nav(`/pedido/${codigo}`)
   }
 
   const esvaziar = () => {
     limparCarrinho()
     setCupom(null)
     setCupomTexto('')
-    setEnviado(false)
   }
 
   const vazio = itensCarrinho.length === 0
@@ -143,28 +194,17 @@ export default function CartDrawer({ aberto, aoFechar }) {
               <span className="font-display text-xl">{brl(total)}</span>
             </div>
 
-            {enviado ? (
-              <div className="rounded-md bg-blush px-4 py-3 text-center text-xs leading-relaxed text-ink/80">
-                Pedido aberto no WhatsApp. É só <strong>enviar a mensagem</strong> por lá ♡
-                <div className="mt-2.5 flex justify-center gap-4">
-                  <button onClick={finalizar} className="font-medium text-pink hover:underline">
-                    Abrir de novo
-                  </button>
-                  <button onClick={esvaziar} className="text-mute hover:text-ink">
-                    Já enviei, esvaziar sacola
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <button onClick={finalizar} className="btn-rose w-full">
-                  <Whats size={18} /> Enviar pedido pelo WhatsApp
-                </button>
-                <p className="text-center text-[11px] text-mute">
-                  O pagamento é combinado na conversa, depois da confirmação.
-                </p>
-              </>
+            <button onClick={finalizar} className="btn-rose w-full">
+              <Whats size={18} /> Enviar pedido pelo WhatsApp
+            </button>
+            {(erros.nome || erros.endereco) && (
+              <p className="text-center text-xs text-pinkdeep" role="alert">
+                Falta preencher {erros.nome && erros.endereco ? 'nome e endereço' : erros.nome ? 'seu nome' : 'o endereço'} para a entrega.
+              </p>
             )}
+            <p className="text-center text-[11px] text-mute">
+              O pagamento é combinado na conversa, depois da confirmação.
+            </p>
           </div>
         )
       }
@@ -174,7 +214,7 @@ export default function CartDrawer({ aberto, aoFechar }) {
           <div className="rounded-full bg-blush p-5 text-pink">
             <Sacola size={28} />
           </div>
-          <p className="text-sm text-mute">Sua sacola ainda está vazia.</p>
+          <p className="text-sm text-mute">Sua sacola está vazia.</p>
           <button onClick={aoFechar} className="btn-ghost text-xs">
             Continuar comprando
           </button>
@@ -184,11 +224,11 @@ export default function CartDrawer({ aberto, aoFechar }) {
           <div className="rounded-md bg-blush px-4 py-3.5 text-xs text-ink/80">
             {faltaPraFrete > 0 ? (
               <>
-                Faltam <strong className="text-pink">{brl(faltaPraFrete)}</strong> para você ganhar frete grátis ♡
+                Faltam <strong className="text-pink">{brl(faltaPraFrete)}</strong> para você ganhar frete grátis
               </>
             ) : (
               <>
-                Oba! Você ganhou <strong className="text-pink">frete grátis</strong> ♡
+                Você ganhou <strong className="text-pink">frete grátis</strong>
               </>
             )}
             <div className="mt-2.5 h-1 overflow-hidden rounded-full bg-white">
@@ -203,7 +243,7 @@ export default function CartDrawer({ aberto, aoFechar }) {
             {itensCarrinho.map((item) => (
               <li key={item.id} className="flex gap-3">
                 <div className="h-20 w-20 shrink-0 overflow-hidden rounded-[4px] bg-blush">
-                  <ProductArt produto={item} />
+                  <ProductArt produto={item} prioridade />
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
                   <div>
@@ -257,7 +297,10 @@ export default function CartDrawer({ aberto, aoFechar }) {
                       type="radio"
                       name="entrega"
                       checked={entrega === e.id}
-                      onChange={() => setEntrega(e.id)}
+                      onChange={() => {
+                        setEntrega(e.id)
+                        setErros({})
+                      }}
                       className="mt-1 accent-pink"
                     />
                     <span>
@@ -275,24 +318,40 @@ export default function CartDrawer({ aberto, aoFechar }) {
 
           {/* dados do cliente */}
           <div className="space-y-3">
-            <p className="label">Seus dados</p>
-            <input
-              value={cliente.nome}
-              onChange={set('nome')}
-              placeholder="Seu nome"
-              autoComplete="name"
-              className="field text-base sm:text-sm"
-            />
-            {precisaEndereco && (
+            <p className="label">
+              Seus dados{' '}
+              <span className="normal-case tracking-normal text-mute/80">
+                {obrigatorio ? '(obrigatórios para a entrega)' : '(opcionais na retirada)'}
+              </span>
+            </p>
+            <div>
               <input
-                value={cliente.endereco}
-                onChange={set('endereco')}
-                placeholder={entrega === 'brasil' ? 'Endereço completo com CEP' : 'Rua, número e bairro'}
-                autoComplete="street-address"
-                className="field text-base sm:text-sm"
+                ref={nomeRef}
+                value={cliente.nome}
+                onChange={set('nome')}
+                placeholder={obrigatorio ? 'Seu nome' : 'Seu nome (opcional)'}
+                autoComplete="name"
+                required={obrigatorio}
+                aria-invalid={!!erros.nome}
+                className={`field text-base sm:text-sm ${erros.nome ? 'border-pinkdeep' : ''}`}
               />
+              {erros.nome && <p className="mt-1.5 text-xs text-pinkdeep">{erros.nome}</p>}
+            </div>
+            {obrigatorio && (
+              <div>
+                <input
+                  ref={enderecoRef}
+                  value={cliente.endereco}
+                  onChange={set('endereco')}
+                  placeholder={entrega === 'brasil' ? 'Endereço completo com CEP' : 'Rua, número e bairro'}
+                  autoComplete="street-address"
+                  required
+                  aria-invalid={!!erros.endereco}
+                  className={`field text-base sm:text-sm ${erros.endereco ? 'border-pinkdeep' : ''}`}
+                />
+                {erros.endereco && <p className="mt-1.5 text-xs text-pinkdeep">{erros.endereco}</p>}
+              </div>
             )}
-            <p className="text-[11px] text-mute">Opcional — se preferir, você combina tudo na conversa.</p>
           </div>
 
           {/* pagamento */}
@@ -318,14 +377,19 @@ export default function CartDrawer({ aberto, aoFechar }) {
           <div>
             <p className="label">Cupom de desconto</p>
             {cupom ? (
-              <div className="flex items-center justify-between rounded-xl border border-pink/40 bg-white px-4 py-3 text-sm">
-                <span className="flex items-center gap-2 text-pink">
-                  <Check size={16} /> {cupom} — {STORE.cupomDesconto}% off nos produtos
-                </span>
-                <button onClick={() => setCupom(null)} className="text-mute hover:text-ink" aria-label="Remover cupom">
-                  <X size={16} />
-                </button>
-              </div>
+              <>
+                <div className="flex items-center justify-between rounded-xl border border-pink/40 bg-white px-4 py-3 text-sm">
+                  <span className="flex items-center gap-2 text-pink">
+                    <Check size={16} /> {cupom}: {STORE.cupomDesconto}% off
+                  </span>
+                  <button onClick={() => setCupom(null)} className="text-mute hover:text-ink" aria-label="Remover cupom">
+                    <X size={16} />
+                  </button>
+                </div>
+                {temItemEmSale && (
+                  <p className="mt-1.5 text-[11px] text-mute">O desconto do cupom não se aplica aos itens que já estão em Sale.</p>
+                )}
+              </>
             ) : (
               <form onSubmit={aplicarCupom} className="flex gap-2">
                 <input
@@ -335,6 +399,7 @@ export default function CartDrawer({ aberto, aoFechar }) {
                     setErroCupom('')
                   }}
                   placeholder={`Ex.: ${STORE.cupomBoasVindas}`}
+                  aria-label="Código do cupom"
                   className="field flex-1 text-base uppercase placeholder:normal-case sm:text-sm"
                 />
                 <button type="submit" className="btn-ghost shrink-0 px-5 text-xs" disabled={!cupomTexto.trim()}>

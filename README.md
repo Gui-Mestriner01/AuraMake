@@ -33,50 +33,50 @@ Extensões que ajudam: *ES7+ React snippets*, *Tailwind CSS IntelliSense*, *Pret
 ## Estrutura
 
 ```
+scripts/prerender.mjs       ← roda no build: gera uma página HTML por produto (título, descrição
+                              e og:image próprios) e o sitemap.xml
+public/
+  fotos/                    ← fotos dos produtos e da vitrine
+  og/                       ← versão JPG da foto de cada produto, usada na prévia do WhatsApp
 src/
-  config.js                 ← dados da loja (WhatsApp, Instagram, frete, cupom, região, senha)
+  config.js                 ← dados da loja: WhatsApp, Instagram, CNPJ, frete, cupom, parcelamento,
+                              formas de entrega e textos de troca/pagamento
   whatsapp.js               ← links e mensagens prontas para o WhatsApp
-  hooks/useReveal.js        ← animação de "revelar ao rolar" das seções
   data/products.js          ← catálogo inicial
-  store/StoreContext.jsx    ← estado global + persistência em localStorage
+  data/avaliacoes.js        ← avaliações de clientes (começa vazio)
+  store/StoreContext.jsx    ← estado global + persistência em localStorage + avisos (toast)
   components/
-    Layout.jsx              ← aviso de frete, cabeçalho, menu mobile, busca, faixa rolante, rodapé
-    Logo.jsx                ← logotipo "aura✳" 
-    ProductArt.jsx          ← ilustração SVG de cada tipo de produto
-    ProductCard.jsx         ← card da vitrine
-    ProductModal.jsx        ← detalhe do produto (cartão centralizado)
+    Layout.jsx              ← aviso de frete, cabeçalho, busca ao digitar, rodapé, botão do WhatsApp
+    ProductCard.jsx         ← card da vitrine (tom, estrelas, parcelamento, adicionar com aviso)
     CartDrawer.jsx          ← sacola: entrega, dados do cliente, pagamento, cupom e pedido no WhatsApp
-    Drawer.jsx / Icons.jsx
+    Toast.jsx / Tom.jsx / Estrelas.jsx / ProductArt.jsx / Drawer.jsx / Icons.jsx / Logo.jsx
   pages/
-    Home.jsx                ← hero, benefícios, categorias, queridinhos, banner skincare,
-                              galeria "Inspire-se"
-    Catalog.jsx             ← listagem com filtro por categoria, busca, favoritos e ordenação
-    admin/
-      AdminLayout.jsx       ← login e navegação do painel
-      Dashboard.jsx         ← vendas do dia, pendentes, estoque baixo
-      AdminProducts.jsx     ← CRUD + edição rápida em gaveta lateral
-      AdminPromotions.jsx   ← seleção em massa e % de desconto
-      AdminSales.jsx        ← lançamento de vendas manuais
+    Home.jsx                ← hero, categorias, queridinhos, "escolha pelo tom", como funciona
+    Catalog.jsx             ← listagem com filtro, busca, favoritos e ordenação
+    Product.jsx             ← página do produto (/produto/p01): galeria, quantidade, avise-me,
+                              avaliações e relacionados
+    Info.jsx                ← /ajuda: sobre, entrega e prazos, trocas, pagamento
+    OrderSent.jsx           ← /pedido/XXXX: confirmação depois de enviar o pedido
+    NotFound.jsx            ← tela 404
+    admin/                  ← painel da proprietária
 ```
 
-## O que já está funcionando
+## Regras que valem a pena conhecer
 
-**Vitrine**
-- Barra de avisos, menu responsivo, busca e sacola com contador.
-- Hero, atalhos circulares por categoria, grade de destaques e bloco de promoções.
-- Card com selo "Novo"/"% OFF", aviso de últimas unidades e estado **Esgotado** com película opaca.
-- Detalhe do produto em gaveta, com parcelamento, info de entrega e botão "avise-me" quando esgotado.
-- Sacola com escolha de entrega (região, Brasil, retirada), frete grátis automático acima do valor
-  definido e fechamento do pedido pelo WhatsApp com a lista montada.
-
-**Painel (`/#/admin`)**
-- Três cartões: vendas do dia, pedidos pendentes e produtos com estoque baixo.
-- Produtos: tabela, busca, cadastro e edição rápida em gaveta lateral. Estoque `0` vira
-  "Esgotado" na vitrine sozinho.
-- Promoções: marca vários produtos, digita a porcentagem e aplica — o preço antigo aparece
-  riscado na vitrine.
-- Vendas manuais: cliente, canal, forma de pagamento, status Pago/Pendente e baixa automática
-  no estoque.
+- **Endereço obrigatório:** em "Entrega" e "Envio", nome e endereço são obrigatórios; em
+  "Retirar com a vendedora" são opcionais.
+- **Cupom de boas-vindas:** vale uma vez por aparelho (primeira compra) e não incide sobre itens
+  que já estão em Sale. A trava é feita no navegador, então confira na conversa do WhatsApp.
+- **Parcelamento:** `parcelas` e `parcelaAPartirDe` em `config.js`.
+- **Avaliações:** edite `src/data/avaliacoes.js`. Só publique depoimentos de clientes reais e com
+  autorização. Enquanto a lista estiver vazia, o site mostra um convite para avaliar.
+- **Fotos:** cada produto tem `imagens: []` (o ideal são 3: embalagem, textura e aplicado). Para a
+  prévia do WhatsApp, salve também um JPG quadrado em `public/og/` com o mesmo nome da 1ª foto.
+- **Avise-me quando chegar:** o contato vai para o Netlify Forms (formulário `avise-me`). No painel
+  do Netlify, ative em *Forms → Enable form detection* e publique de novo; os contatos aparecem em
+  *Forms*. Se o formulário não estiver disponível, o site cai para a mensagem no WhatsApp.
+- **Páginas de produto:** o build gera `dist/produto/<id>/index.html` para os produtos de
+  `products.js`. Produtos criados só pelo painel funcionam no site, mas não ganham prévia própria.
 
 ## Personalizando para a cliente
 
@@ -89,9 +89,9 @@ itens, subtotal, cupom, frete, total, tipo de entrega, endereço, forma de pagam
 **Prévia ao compartilhar o link:** `public/og-image.jpg` + tags `og:` no `index.html`. Se o site
 mudar de endereço, troque a URL nas tags `og:url` e `og:image`.
 
-**Fotos dos produtos:** cada produto tem o campo `image`. Pode ser uma URL completa ou um arquivo
+**Fotos dos produtos:** cada produto tem a lista `imagens`. Cada item pode ser uma URL completa ou um arquivo
 dentro de `public/fotos/`, escrito sem a barra inicial (`fotos/nome.webp`), para funcionar em
-qualquer hospedagem. Se o campo ficar vazio, o site desenha a ilustração do tipo (`batom`,
+qualquer hospedagem. Se a lista ficar vazia, o site desenha a ilustração do tipo (`batom`,
 `paleta`, `base`, `mascara`, `blush`, `po`, `pincel`, `gloss`, `delineador`, `serum`, `creme`).
 
 As fotos que vêm no projeto (produtos, hero, banners e galeria) são de demonstração, do
@@ -120,12 +120,12 @@ As fotos fixas da vitrine (hero, categorias, banner, galeria) estão referenciad
 
 ## Deploy
 
-O projeto usa `HashRouter` e caminhos relativos, então o conteúdo de `dist/` funciona em
-qualquer hospedagem estática (Vercel, Netlify, GitHub Pages, hospedagem compartilhada) sem
-precisar configurar redirects.
+O site usa endereços de verdade (`/loja`, `/produto/p01`), então a hospedagem precisa devolver o
+`index.html` para caminhos que não são arquivo. No Netlify isso já está no `netlify.toml`
+(`[[redirects]]`). Links antigos com `#` (`/#/loja`) continuam funcionando.
 
-Publicado no Netlify em https://aura-beauty-care.netlify.app (configuração em `netlify.toml`).
-Para publicar uma nova versão pela linha de comando:
+Publicado no Netlify em https://aura-beauty-care.netlify.app. Se o endereço mudar, troque `url` em
+`src/config.js`, as tags `og:` do `index.html` e o `public/robots.txt`.
 
 ```bash
 npm run build

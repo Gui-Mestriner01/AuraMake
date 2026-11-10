@@ -1,8 +1,9 @@
 /**
  * Ilustração "solo" do produto: um item por vez, centralizado, fundo neutro.
- * Usada quando o produto ainda não tem foto real (campo `image` vazio).
- * Basta preencher `image` no cadastro que a foto substitui o desenho.
+ * Usada quando o produto ainda não tem foto real (lista `imagens` vazia).
+ * Basta preencher as fotos no cadastro que a foto substitui o desenho.
  */
+import { urlImagem } from '../store/StoreContext'
 
 const escurecer = (hex, f = 0.78) => {
   const n = parseInt(hex.replace('#', ''), 16)
@@ -178,13 +179,19 @@ function Desenho({ tipo, tom }) {
   }
 }
 
-export default function ProductArt({ produto, className = '' }) {
-  if (produto?.image) {
+/**
+ * `indice` escolhe qual foto da lista mostrar. `prioridade` carrega a imagem na hora
+ * (use nos itens da primeira dobra); o resto fica com carregamento sob demanda.
+ */
+export default function ProductArt({ produto, className = '', indice = 0, prioridade = false }) {
+  const foto = produto?.imagens?.[indice] ?? (indice === 0 ? produto?.image : null)
+  if (foto) {
     return (
       <img
-        src={produto.image}
+        src={urlImagem(foto)}
         alt={produto.nome}
-        loading="lazy"
+        loading={prioridade ? 'eager' : 'lazy'}
+        fetchpriority={prioridade ? 'high' : undefined}
         decoding="async"
         className={`h-full w-full object-cover ${className}`}
       />

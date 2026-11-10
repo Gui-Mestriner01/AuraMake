@@ -1,6 +1,8 @@
-// Catálogo inicial. Cada produto aceita `image`: uma URL completa ou um arquivo
-// dentro de public/ (ex.: 'fotos/batom.webp'). Se ficar vazio, o site desenha a
-// ilustração do tipo automaticamente. Fotos de exemplo: Unsplash (licença livre).
+// Catálogo inicial. Cada produto aceita `imagens`: uma lista de URLs completas ou de
+// arquivos dentro de public/ (ex.: 'fotos/batom.webp'). O ideal são 3 fotos por produto,
+// nesta ordem: embalagem, textura/swatch e aplicado. Se a lista ficar vazia, o site
+// desenha a ilustração do tipo. `tomNome` é o nome da cor mostrado ao lado da bolinha.
+// Fotos de exemplo: Unsplash (licença livre).
 export const SEED_PRODUCTS = [
   {
     id: 'p01',
@@ -9,11 +11,12 @@ export const SEED_PRODUCTS = [
     categoria: 'labios',
     tipo: 'batom',
     tom: '#A8343C',
+    tomNome: 'Vermelho cereja',
     preco: 68.9,
     desconto: 0,
     estoque: 14,
     selo: 'Novo',
-    image: 'fotos/batom-matte.webp',
+    imagens: ['fotos/batom-matte.webp'],
     descricao:
       'Acabamento matte aveludado com 8h de permanência. Textura leve, não resseca e constrói cor em camadas.'
   },
@@ -24,11 +27,12 @@ export const SEED_PRODUCTS = [
     categoria: 'olhos',
     tipo: 'paleta',
     tom: '#B07A5E',
+    tomNome: 'Nudes quentes',
     preco: 139.9,
     desconto: 15,
     estoque: 6,
     selo: '',
-    image: 'fotos/paleta.webp',
+    imagens: ['fotos/paleta.webp'],
     descricao:
       'Doze tons entre mates e cintilantes para o olhar do dia a dia ao da noite. Alta pigmentação e baixa queda.'
   },
@@ -39,11 +43,12 @@ export const SEED_PRODUCTS = [
     categoria: 'pele',
     tipo: 'base',
     tom: '#D7A77E',
+    tomNome: 'Bege médio',
     preco: 119.9,
     desconto: 0,
     estoque: 9,
     selo: 'Mais vendido',
-    image: 'fotos/base.webp',
+    imagens: ['fotos/base.webp'],
     descricao:
       'Cobertura construível com efeito natural, proteção solar FPS 30 e ácido hialurônico na fórmula.'
   },
@@ -54,11 +59,12 @@ export const SEED_PRODUCTS = [
     categoria: 'olhos',
     tipo: 'mascara',
     tom: '#1F1B19',
+    tomNome: 'Preto',
     preco: 79.9,
     desconto: 0,
     estoque: 0,
     selo: '',
-    image: 'fotos/mascara.webp',
+    imagens: ['fotos/mascara.webp'],
     descricao:
       'Escova curva que separa e alonga. Fórmula à prova de borrões, remove com água morna.'
   },
@@ -69,11 +75,12 @@ export const SEED_PRODUCTS = [
     categoria: 'pele',
     tipo: 'blush',
     tom: '#E08A79',
+    tomNome: 'Pêssego',
     preco: 59.9,
     desconto: 20,
     estoque: 21,
     selo: '',
-    image: 'fotos/blush.webp',
+    imagens: ['fotos/blush.webp'],
     descricao: 'Pó sedoso com brilho sutil, fácil de esfumar e com fixação de longa duração.'
   },
   {
@@ -87,7 +94,7 @@ export const SEED_PRODUCTS = [
     desconto: 0,
     estoque: 4,
     selo: 'Novo',
-    image: 'fotos/pinceis.webp',
+    imagens: ['fotos/pinceis.webp'],
     descricao:
       'Cerdas sintéticas macias, cabo em madeira e virola dourada. Inclui estojo para viagem.'
   },
@@ -98,11 +105,12 @@ export const SEED_PRODUCTS = [
     categoria: 'labios',
     tipo: 'gloss',
     tom: '#D98BA0',
+    tomNome: 'Rosé',
     preco: 49.9,
     desconto: 0,
     estoque: 18,
     selo: '',
-    image: 'fotos/gloss.webp',
+    imagens: ['fotos/gloss.webp'],
     descricao: 'Brilho de vidro, textura não pegajosa e óleo de jojoba para hidratar os lábios.'
   },
   {
@@ -116,7 +124,7 @@ export const SEED_PRODUCTS = [
     desconto: 10,
     estoque: 7,
     selo: '',
-    image: 'fotos/serum.webp',
+    imagens: ['fotos/serum.webp'],
     descricao: 'Antioxidante que uniformiza o tom e devolve viço. Uso pela manhã, antes do protetor.'
   },
   {
@@ -130,7 +138,7 @@ export const SEED_PRODUCTS = [
     desconto: 0,
     estoque: 11,
     selo: '',
-    image: 'fotos/hidratante.webp',
+    imagens: ['fotos/hidratante.webp'],
     descricao: 'Textura em gel-creme com pantenol e aveia, indicada para peles sensíveis.'
   },
   {
@@ -140,11 +148,12 @@ export const SEED_PRODUCTS = [
     categoria: 'pele',
     tipo: 'po',
     tom: '#EBD9C8',
+    tomNome: 'Translúcido',
     preco: 89.9,
     desconto: 0,
     estoque: 3,
     selo: '',
-    image: 'fotos/po.webp',
+    imagens: ['fotos/po.webp'],
     descricao: 'Partículas ultrafinas que selam a maquiagem sem deixar aspecto seco ou acinzentado.'
   },
   {
@@ -154,11 +163,12 @@ export const SEED_PRODUCTS = [
     categoria: 'olhos',
     tipo: 'delineador',
     tom: '#17120F',
+    tomNome: 'Preto intenso',
     preco: 54.9,
     desconto: 0,
     estoque: 16,
     selo: '',
-    image: 'fotos/delineador.webp',
+    imagens: ['fotos/delineador.webp'],
     descricao: 'Ponta fina e flexível para traços precisos. Secagem rápida e resistente à água.'
   },
   {
@@ -168,11 +178,12 @@ export const SEED_PRODUCTS = [
     categoria: 'labios',
     tipo: 'batom',
     tom: '#C2847A',
+    tomNome: 'Rosé queimado',
     preco: 72.9,
     desconto: 25,
     estoque: 8,
     selo: '',
-    image: 'fotos/batom-liquido.webp',
+    imagens: ['fotos/batom-liquido.webp'],
     descricao: 'Aplicador de precisão, cor intensa em uma passada e conforto de uso prolongado.'
   }
 ]

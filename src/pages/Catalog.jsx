@@ -1,9 +1,9 @@
 import { useMemo, useState } from 'react'
-import { Link, useOutletContext, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { CATEGORIAS, STORE } from '../config'
-import { esgotado, precoFinal, useLoja } from '../store/StoreContext'
+import { esgotado, precoFinal, semAcento, useLoja } from '../store/StoreContext'
+import useTitulo from '../hooks/useTitulo'
 import ProductCard from '../components/ProductCard'
-import ProductModal from '../components/ProductModal'
 import { Chevron, Whats } from '../components/Icons'
 import { linkWhats } from '../whatsapp'
 
@@ -16,14 +16,12 @@ const ORDENS = [
 
 export default function Catalog() {
   const { produtos, favoritos } = useLoja()
-  const { abrirCarrinho } = useOutletContext()
   const [params, setParams] = useSearchParams()
-  const [aberto, setAberto] = useState(null)
   const [ordem, setOrdem] = useState('relevancia')
 
   const cat = params.get('cat') || ''
   const grupo = params.get('grupo') || ''
-  const q = (params.get('q') || '').toLowerCase().trim()
+  const q = (params.get('q') || '').trim()
   const sale = params.get('sale') === '1'
   const novidades = params.get('novidades') === '1'
   const fav = params.get('fav') === '1'
@@ -35,7 +33,7 @@ export default function Catalog() {
     if (sale) r = r.filter((p) => (p.desconto || 0) > 0)
     if (novidades) r = r.filter((p) => p.selo === 'Novo')
     if (fav) r = r.filter((p) => favoritos.includes(p.id))
-    if (q) r = r.filter((p) => [p.nome, p.marca, p.descricao].join(' ').toLowerCase().includes(q))
+    if (q) r = r.filter((p) => semAcento([p.nome, p.marca, p.tomNome, CATEGORIAS.find((c) => c.slug === p.categoria)?.nome, p.descricao].join(' ')).includes(semAcento(q)))
     if (ordem === 'menor') r.sort((a, b) => precoFinal(a) - precoFinal(b))
     if (ordem === 'maior') r.sort((a, b) => precoFinal(b) - precoFinal(a))
     if (ordem === 'az') r.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
@@ -58,7 +56,9 @@ export default function Catalog() {
             : CATEGORIAS.find((c) => c.slug === cat)?.nome || 'Todos os produtos'
 
   const semFiltro = !cat && !sale && !novidades && !fav && !grupo && !q
-  const produtoAberto = aberto ? produtos.find((p) => p.id === aberto.id) ?? null : null
+  // em Favoritos sem nenhum item, os filtros de categoria não têm o que filtrar
+  const mostrarFiltros = !(fav && favoritos.length === 0)
+  useTitulo(titulo)
 
   return (
     <>
@@ -88,6 +88,7 @@ export default function Catalog() {
           </label>
         </div>
 
+        {mostrarFiltros && (
         <div className="mt-6 border-b border-clay/70 pb-4">
           <div className="sem-scroll -mx-4 flex gap-1 overflow-x-auto px-4 sm:mx-0 sm:px-0">
             {[{ slug: '', nome: 'Todos' }, ...CATEGORIAS].map((c) => {
@@ -105,13 +106,13 @@ export default function Catalog() {
               )
             })}
           </div>
-
         </div>
+        )}
 
         {lista.length === 0 ? (
           <div className="mx-auto max-w-sm py-24 text-center">
             <p className="font-display text-2xl font-light">
-              {fav ? 'Nenhum favorito ainda' : 'Nada por aqui ainda'}
+              {fav ? 'Nenhum favorito ainda' : q ? 'Nada encontrado' : 'Nada por aqui ainda'}
             </p>
             <p className="mt-3 text-sm leading-relaxed text-mute">
               {fav
@@ -120,7 +121,7 @@ export default function Catalog() {
             </p>
             <div className="mt-7 flex justify-center gap-2">
               <Link to="/loja" className="btn-ghost text-xs">
-                Ver todos
+                Ver todos os produtos
               </Link>
               {!fav && (
                 <a
@@ -140,14 +141,13 @@ export default function Catalog() {
           </div>
         ) : (
           <div className="mt-8 grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-x-6 lg:grid-cols-4">
-            {lista.map((p) => (
-              <ProductCard key={p.id} produto={p} onAbrir={setAberto} />
+            {lista.map((p, i) => (
+              <ProductCard key={p.id} produto={p} prioridade={i < 8} />
             ))}
           </div>
         )}
       </section>
 
-      <ProductModal produto={produtoAberto} aoFechar={() => setAberto(null)} aoAdicionar={abrirCarrinho} />
     </>
   )
 }

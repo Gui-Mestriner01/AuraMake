@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /pedido/
+
+Sitemap: https://aura-beauty-care.netlify.app/sitemap.xml

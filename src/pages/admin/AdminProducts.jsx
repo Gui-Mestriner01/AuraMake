@@ -29,7 +29,8 @@ const VAZIO = {
   desconto: 0,
   estoque: 0,
   selo: '',
-  image: '',
+  tomNome: '',
+  imagens: [],
   descricao: ''
 }
 
@@ -118,15 +119,23 @@ function Formulario({ dados, setDados }) {
       </div>
 
       <div>
-        <label className="label">Foto real (opcional)</label>
-        <input
-          className="field"
-          value={dados.image}
-          onChange={set('image')}
-          placeholder="https://... ou fotos/batom.webp"
+        <label className="label">Nome do tom (opcional)</label>
+        <input className="field" value={dados.tomNome || ''} onChange={set('tomNome')} placeholder="Ex.: Vermelho cereja" />
+      </div>
+
+      <div>
+        <label className="label">Fotos (uma por linha)</label>
+        <textarea
+          rows="3"
+          className="field resize-none"
+          value={(dados.imagens || []).join('\n')}
+          onChange={(e) => setDados((d) => ({ ...d, imagens: e.target.value.split('\n').map((l) => l.trim()) }))}
+          onBlur={() => setDados((d) => ({ ...d, imagens: (d.imagens || []).filter(Boolean) }))}
+          placeholder={'fotos/batom.webp\nfotos/batom-swatch.webp\nhttps://...'}
         />
         <p className="mt-1.5 text-[11px] text-mute">
-          Com a foto preenchida, ela substitui a ilustração na vitrine.
+          O ideal são 3: embalagem, textura/swatch e aplicado. A primeira é a capa. Sem foto, o site
+          usa a ilustração.
         </p>
       </div>
 

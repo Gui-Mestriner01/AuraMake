@@ -1,8 +1,18 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { SEED_PRODUCTS } from '../data/products'
+import { AVALIACOES } from '../data/avaliacoes'
+import { STORE } from '../config'
 
 const KEY = 'aura:loja:v2'
 const Ctx = createContext(null)
+
+/** Produtos salvos em versões antigas tinham `image` (uma foto só): converte para `imagens[]`. */
+const normalizar = (p) => {
+  const { image, ...resto } = p
+  const imagens = Array.isArray(p.imagens) ? p.imagens.filter(Boolean) : image ? [image] : []
+  const semente = SEED_PRODUCTS.find((s) => s.id === p.id)
+  return { tomNome: semente?.tomNome ?? '', ...resto, imagens }
+}
 
 function carregar() {
   try {
@@ -10,7 +20,7 @@ function carregar() {
     if (!bruto) return null
     const dados = JSON.parse(bruto)
     if (!Array.isArray(dados.produtos)) return null
-    return dados
+    return { ...dados, produtos: dados.produtos.map(normalizar) }
   } catch {
     return null
   }
@@ -19,7 +29,7 @@ function carregar() {
 const uid = (p) => p + Math.random().toString(36).slice(2, 9)
 
 export function StoreProvider({ children }) {
-  const inicial = carregar()
+  const inicial = useMemo(carregar, [])
   const [produtos, setProdutos] = useState(inicial?.produtos ?? SEED_PRODUCTS)
   const [vendas, setVendas] = useState(inicial?.vendas ?? [])
   const [carrinho, setCarrinho] = useState(inicial?.carrinho ?? [])
@@ -34,6 +44,24 @@ export function StoreProvider({ children }) {
     }
   }, [produtos, vendas, carrinho, favoritos])
 
+  /* ---------- interface: sacola e avisos (toast) ---------- */
+  const [sacolaAberta, setSacolaAberta] = useState(false)
+  const abrirSacola = useCallback(() => setSacolaAberta(true), [])
+  const fecharSacola = useCallback(() => setSacolaAberta(false), [])
+
+  const [toast, setToast] = useState(null)
+  const relogio = useRef(null)
+  const fecharToast = useCallback(() => {
+    clearTimeout(relogio.current)
+    setToast(null)
+  }, [])
+  /** avisar('Texto') ou avisar('Texto', { sacola: true }) para mostrar o atalho "Ver sacola". */
+  const avisar = useCallback((texto, opcoes = {}) => {
+    clearTimeout(relogio.current)
+    setToast({ id: Date.now(), texto, ...opcoes })
+    relogio.current = setTimeout(() => setToast(null), 3600)
+  }, [])
+
   /* ---------- produtos ---------- */
   const criarProduto = (dados) =>
     setProdutos((lista) => [
@@ -44,11 +72,12 @@ export function StoreProvider({ children }) {
         categoria: 'pele',
         tipo: 'base',
         tom: '#C2847A',
+        tomNome: '',
         preco: 0,
         desconto: 0,
         estoque: 0,
         selo: '',
-        image: '',
+        imagens: [],
         descricao: '',
         ...dados
       },
@@ -70,16 +99,18 @@ export function StoreProvider({ children }) {
     )
 
   /* ---------- carrinho ---------- */
-  const addCarrinho = (id, qtd = 1) =>
-    setCarrinho((c) => {
-      const prod = produtos.find((p) => p.id === id)
-      if (!prod || prod.estoque <= 0) return c
-      const atual = c.find((i) => i.id === id)
-      const novaQtd = Math.min((atual?.qtd ?? 0) + qtd, prod.estoque)
-      return atual
-        ? c.map((i) => (i.id === id ? { ...i, qtd: novaQtd } : i))
-        : [...c, { id, qtd: novaQtd }]
-    })
+  /** Adiciona à sacola respeitando o estoque. Devolve quantas unidades entraram de fato. */
+  const addCarrinho = (id, qtd = 1) => {
+    const prod = produtos.find((p) => p.id === id)
+    if (!prod || prod.estoque <= 0) return 0
+    const atual = carrinho.find((i) => i.id === id)?.qtd ?? 0
+    const nova = Math.min(atual + qtd, prod.estoque)
+    if (nova <= atual) return 0
+    setCarrinho((c) =>
+      c.some((i) => i.id === id) ? c.map((i) => (i.id === id ? { ...i, qtd: nova } : i)) : [...c, { id, qtd: nova }]
+    )
+    return nova - atual
+  }
 
   const mudarQtd = (id, qtd) =>
     setCarrinho((c) =>
@@ -166,7 +197,13 @@ export function StoreProvider({ children }) {
     logado,
     entrar,
     sair,
-    resetarDemo
+    resetarDemo,
+    sacolaAberta,
+    abrirSacola,
+    fecharSacola,
+    toast,
+    avisar,
+    fecharToast
   }
 
   return <Ctx.Provider value={valor}>{children}</Ctx.Provider>
@@ -192,4 +229,31 @@ export const mesmoDia = (iso, ref = new Date()) => {
     d.getMonth() === ref.getMonth() &&
     d.getFullYear() === ref.getFullYear()
   )
+}
+
+/** 'fotos/batom.webp' → '/fotos/batom.webp' (URLs completas passam direto). */
+export const urlImagem = (src) => (!src || /^(https?:|data:|blob:|\/)/.test(src) ? src : `/${src}`)
+
+/** Texto sem acento e em minúsculas, para a busca achar "labios" em "Lábios". */
+export const semAcento = (s) =>
+  String(s ?? '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+
+/** { vezes, valor } quando o preço dá direito a parcelar; senão null. */
+export const parcelamento = (preco) =>
+  STORE.parcelas > 1 && preco >= STORE.parcelaAPartirDe
+    ? { vezes: STORE.parcelas, valor: Number((preco / STORE.parcelas).toFixed(2)) }
+    : null
+
+/** Só maquiagem de cor mostra a bolinha de tom (pincel e skincare não têm "tom"). */
+export const temTom = (p) => !!p.tom && ['pele', 'olhos', 'labios'].includes(p.categoria)
+
+/** Avaliações de um produto e a média delas. */
+export const avaliacoesDe = (id) => AVALIACOES.filter((a) => a.produto === id)
+export const mediaDe = (id) => {
+  const lista = avaliacoesDe(id)
+  if (!lista.length) return null
+  return { nota: lista.reduce((s, a) => s + a.nota, 0) / lista.length, total: lista.length }
 }

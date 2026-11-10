@@ -177,3 +177,14 @@ export const CoracaoCheio = ({ size = 20, ...rest }) => (
     <path d="M12 20s-7-4.3-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.7-7 9-7 9Z" />
   </svg>
 )
+export const Compartilhar = (p) => (
+  <Svg {...p}>
+    <path d="M12 15V4M8 7.5 12 4l4 3.5M6 11H5v9h14v-9h-1" />
+  </Svg>
+)
+export const Relogio = (p) => (
+  <Svg {...p}>
+    <circle cx="12" cy="12" r="8.5" />
+    <path d="M12 7.5V12l3 2" />
+  </Svg>
+)

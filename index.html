@@ -6,7 +6,12 @@
     <meta name="theme-color" content="#E8106E" />
     <meta name="description" content="Maquiagem e skincare originais. Entrega na região, envio para todo o Brasil e pedido fácil pelo WhatsApp." />
     <title>Aura Beauty &amp; Care — maquiagem e skincare</title>
-    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+
+    <!-- ícone da aba: .ico para navegadores antigos, SVG para os novos, PNG para iPhone/Android -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- prévia ao compartilhar o link (WhatsApp, Instagram, Facebook) -->
     <meta property="og:type" content="website" />
@@ -25,9 +30,70 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap"
       rel="stylesheet"
     />
+
+    <!-- tela de carregamento: aparece até o site montar (o React substitui o conteúdo de #root) -->
+    <style>
+      .abrindo {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        background: #fffaf7;
+        font-family: Georgia, 'Times New Roman', serif;
+      }
+      .abrindo b {
+        font-weight: 400;
+        font-size: 44px;
+        letter-spacing: -0.04em;
+        color: #e8106e;
+        line-height: 1;
+      }
+      .abrindo b i {
+        display: inline-block;
+        font-style: normal;
+        color: #f26a21;
+        font-size: 30px;
+        vertical-align: top;
+        animation: abrindo-gira 1.6s linear infinite;
+      }
+      .abrindo span {
+        font: 500 9px/1 system-ui, sans-serif;
+        letter-spacing: 0.34em;
+        text-transform: uppercase;
+        color: #6b5f58;
+      }
+      @keyframes abrindo-gira {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .abrindo b i {
+          animation: none;
+        }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="abrindo" role="status" aria-label="Carregando a loja">
+        <b>aura<i>✳</i></b>
+        <span>Beauty &amp; Care</span>
+      </div>
+    </div>
+
+    <!-- Formulário "Avise-me quando chegar": fica escondido aqui só para o Netlify Forms
+         reconhecer os campos no deploy. O envio de verdade é feito em src/pages/Product.jsx. -->
+    <form name="avise-me" data-netlify="true" netlify-honeypot="apelido" hidden>
+      <input name="apelido" />
+      <input name="produto" />
+      <input name="nome" />
+      <input name="whatsapp" />
+    </form>
+
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
