@@ -63,7 +63,7 @@ export default function Catalog() {
   return (
     <>
       <section className="wrap pb-16 pt-10 sm:pt-14">
-        <h1 className="font-display text-4xl font-light tracking-[-0.02em] sm:text-5xl">
+        <h1 className="font-display text-[2.8rem] font-medium leading-none tracking-[-0.03em] sm:text-7xl">
           {titulo}
           <span className="text-pink">.</span>
         </h1>

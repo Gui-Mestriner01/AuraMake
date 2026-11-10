@@ -26,7 +26,7 @@ export default function OrderSent() {
       <span className="flex h-16 w-16 items-center justify-center rounded-full bg-pink text-white shadow-pink">
         <Check size={30} strokeWidth={2} />
       </span>
-      <h1 className="mt-6 font-display text-4xl font-light tracking-[-0.02em] sm:text-5xl">Pedido enviado!</h1>
+      <h1 className="mt-6 font-display text-[2.8rem] font-medium leading-none tracking-[-0.03em] sm:text-7xl">Pedido enviado!</h1>
       <p className="mt-3 text-sm text-mute">
         Pedido <strong className="font-semibold text-ink">#{codigo}</strong>
       </p>

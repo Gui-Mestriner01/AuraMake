@@ -12,37 +12,72 @@ import { Caminhao, Escudo, Instagram, SetaDiag, Whats } from '../components/Icon
 /* Hero                                                                */
 /* ------------------------------------------------------------------ */
 
+/** Selo giratório do cupom, colado na foto do hero. */
+function Selo() {
+  return (
+    <div className="absolute -bottom-7 -left-9 h-32 w-32 sm:-left-14 sm:h-40 sm:w-40" aria-hidden>
+      <svg viewBox="0 0 120 120" className="h-full w-full drop-shadow-lg">
+        <circle cx="60" cy="60" r="60" fill="#F26A21" />
+        <defs>
+          <path id="selo-arco" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" />
+        </defs>
+        <g className="animate-girar" style={{ transformOrigin: '60px 60px' }}>
+          <text fontSize="9.5" fontWeight="700" fill="#2A0E1B" textLength="276" lengthAdjust="spacing">
+            <textPath href="#selo-arco" textLength="276" lengthAdjust="spacing">
+              NA PRIMEIRA COMPRA ✳ CUPOM {STORE.cupomBoasVindas} ✳
+            </textPath>
+          </text>
+        </g>
+        <text
+          x="60"
+          y="71"
+          textAnchor="middle"
+          fontSize="32"
+          fontWeight="700"
+          fontStyle="italic"
+          fill="#fff"
+          style={{ fontFamily: '"Bodoni Moda", Georgia, serif' }}
+        >
+          {STORE.cupomDesconto}%
+        </text>
+      </svg>
+    </div>
+  )
+}
+
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-blush">
-      {/* foto: no celular fica em cima; no computador ocupa a metade direita */}
-      <div className="relative h-[52svh] min-h-[340px] lg:absolute lg:inset-y-0 lg:left-[44%] lg:right-0 lg:h-auto">
-        <img
-          src="/fotos/hero-1.webp"
-          alt="Maquiagem rosa com pele iluminada"
-          fetchpriority="high"
-          className="h-full w-full object-cover object-[42%_30%]"
-        />
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-blush to-transparent lg:inset-y-0 lg:left-0 lg:h-auto lg:w-48 lg:bg-gradient-to-r" />
-      </div>
-
-      <div className="wrap relative -mt-8 pb-14 lg:mt-0 lg:flex lg:min-h-[clamp(520px,calc(100svh-140px),640px)] lg:items-center lg:py-16">
-        <div className="max-w-md">
-          <h1 className="font-display text-[3.1rem] font-light leading-[.98] tracking-[-0.025em] text-ink sm:text-6xl xl:text-[5rem]">
+    <section className="relative overflow-hidden bg-pink text-white">
+      <div className="wrap grid items-center gap-14 pb-20 pt-12 lg:grid-cols-[1.15fr_.85fr] lg:gap-8 lg:py-20">
+        <div>
+          <h1 className="font-display text-[3.7rem] font-medium leading-[.9] tracking-[-0.035em] sm:text-[5.5rem] xl:text-[7.25rem]">
             <span className="block animate-fade-up">Sua beleza.</span>
-            <em className="block animate-fade-up font-normal italic text-pink [animation-delay:90ms]">Seu momento.</em>
+            <em className="block animate-fade-up italic text-pessego [animation-delay:90ms]">Seu momento.</em>
           </h1>
-          <p className="mt-6 max-w-[38ch] animate-fade-up text-[15px] leading-relaxed text-ink/65 [animation-delay:180ms]">
+          <p className="mt-7 max-w-[34ch] animate-fade-up text-base leading-relaxed text-white/85 [animation-delay:180ms] sm:text-lg">
             Maquiagem e skincare originais, com entrega em {STORE.regiao} e envio para todo o Brasil.
           </p>
-          <div className="mt-8 flex animate-fade-up flex-wrap items-center gap-x-6 gap-y-3 [animation-delay:260ms]">
-            <Link to="/loja" className="cta-pink">
+          <div className="mt-9 flex animate-fade-up flex-wrap items-center gap-x-7 gap-y-4 [animation-delay:260ms]">
+            <Link to="/loja" className="cta bg-white text-pink hover:bg-ink hover:text-white">
               Ver produtos <SetaDiag size={17} />
             </Link>
-            <Link to="/loja?sale=1" className="text-sm text-ink underline decoration-pink decoration-2 underline-offset-[6px] hover:text-pink">
+            <Link to="/loja?sale=1" className="text-sm font-medium underline decoration-pessego decoration-2 underline-offset-[7px] hover:text-pessego">
               Ofertas da semana
             </Link>
           </div>
+        </div>
+
+        {/* foto em arco, a forma que se repete nas categorias e no banner */}
+        <div className="relative mx-auto w-[74%] max-w-[400px] lg:mr-4">
+          <div className="aspect-[4/5] overflow-hidden rounded-b-[2.5rem] rounded-t-full bg-pinkdeep ring-[10px] ring-white/20">
+            <img
+              src="/fotos/hero-1.webp"
+              alt="Maquiagem rosa com pele iluminada"
+              fetchpriority="high"
+              className="h-full w-full object-cover object-[68%_30%]"
+            />
+          </div>
+          <Selo />
         </div>
       </div>
     </section>
@@ -61,15 +96,15 @@ const BENEFICIOS = [
 
 function Beneficios() {
   return (
-    <section className="border-b border-clay/70 bg-white">
+    <section className="bg-ink text-cream">
       <div className="wrap grid grid-cols-3 gap-3 py-5 sm:py-6">
         {BENEFICIOS.map(({ Icone, texto, to }) => (
           <Link
             key={texto}
             to={to}
-            className="flex flex-col items-center gap-2 text-center text-[11px] leading-snug text-ink/70 transition hover:text-pink sm:flex-row sm:justify-center sm:gap-3 sm:text-left sm:text-[13px]"
+            className="flex flex-col items-center gap-2 text-center text-[11px] leading-snug text-cream/85 transition hover:text-pessego sm:flex-row sm:justify-center sm:gap-3 sm:text-left sm:text-sm"
           >
-            <Icone size={19} className="shrink-0 text-pink" />
+            <Icone size={20} className="shrink-0 text-pessego" />
             {texto}
           </Link>
         ))}
@@ -94,19 +129,19 @@ function Categorias() {
   return (
     <section className="py-14 sm:py-20">
       <div className="wrap">
-        <h2 className="titulo text-center">Por onde começamos?</h2>
+        <h2 className="titulo">Por onde começamos?</h2>
 
-        <div className="sem-scroll -mx-4 mt-9 flex snap-x gap-4 overflow-x-auto px-4 sm:mx-auto sm:grid sm:max-w-4xl sm:grid-cols-5 sm:gap-8 sm:overflow-visible sm:px-0">
+        <div className="sem-scroll -mx-4 mt-10 flex snap-x gap-3.5 overflow-x-auto px-4 sm:mx-0 sm:grid sm:grid-cols-5 sm:gap-6 sm:overflow-visible sm:px-0">
           {ATALHOS.map((c) => (
             <Link
               key={c.slug}
               to={`/loja?cat=${c.slug}`}
-              className="group flex w-[27vw] max-w-[120px] shrink-0 snap-start flex-col items-center sm:w-auto sm:max-w-none"
+              className="group flex w-[36vw] max-w-[160px] shrink-0 snap-start flex-col items-center sm:w-auto sm:max-w-none"
             >
-              <div className="aspect-square w-full overflow-hidden rounded-full bg-blush">
+              <div className="aspect-[3/4] w-full overflow-hidden rounded-b-3xl rounded-t-full bg-blush">
                 <img src={c.img} alt="" className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
               </div>
-              <p className="mt-3 text-sm text-ink/80 transition-colors group-hover:text-pink">{c.nome}</p>
+              <p className="mt-4 font-display text-xl font-medium italic transition-colors group-hover:text-pink sm:text-2xl">{c.nome}</p>
             </Link>
           ))}
         </div>
@@ -124,7 +159,7 @@ function Destaques() {
   const lista = produtos.slice(0, 8)
 
   return (
-    <section className="border-t border-clay/60 py-14 sm:py-20">
+    <section className="pb-14 sm:pb-20">
       <div className="wrap">
         <div className="flex items-end justify-between gap-4">
           <h2 className="titulo">Os queridinhos da vez</h2>
@@ -144,7 +179,7 @@ function Destaques() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link to="/loja" className="btn-ghost px-7">
+          <Link to="/loja" className="cta-ink">
             Ver todos os produtos
           </Link>
         </div>
@@ -165,7 +200,7 @@ function Tons() {
   return (
     <section className="bg-ink py-14 text-cream sm:py-20">
       <div className="wrap">
-        <h2 className="font-display text-[2rem] font-light leading-[1.08] tracking-[-0.015em] sm:text-[2.75rem]">
+        <h2 className="font-display text-[2.35rem] font-medium leading-none tracking-[-0.025em] sm:text-[3.5rem]">
           Escolha pelo tom
         </h2>
         <p className="mt-3 max-w-[44ch] text-[15px] leading-relaxed text-cream/60">
@@ -195,8 +230,8 @@ function Tons() {
 function BannerSkincare() {
   return (
     <section className="wrap py-14 sm:py-20">
-      <div className="grid overflow-hidden rounded-lg bg-blush lg:grid-cols-2">
-        <div className="relative min-h-[260px] sm:min-h-[380px]">
+      <div className="grid items-center gap-8 overflow-hidden rounded-[2.5rem] bg-pessego p-6 sm:p-10 lg:grid-cols-[.8fr_1.2fr] lg:gap-14 lg:p-14">
+        <div className="relative mx-auto aspect-[4/5] w-[70%] max-w-[340px] overflow-hidden rounded-b-[2rem] rounded-t-full lg:w-full">
           <img
             src="/fotos/banner-skincare.webp"
             alt="Sérum facial entre pêssegos"
@@ -204,13 +239,13 @@ function BannerSkincare() {
             className="absolute inset-0 h-full w-full object-cover"
           />
         </div>
-        <div className="flex flex-col justify-center px-7 py-12 sm:px-14">
+        <div className="flex flex-col justify-center pb-4 lg:pb-0">
           <h2 className="titulo">
             Uma pausa.
             <br />
-            <em>Todo o seu brilho.</em>
+            <em className="italic text-pink">Todo o seu brilho.</em>
           </h2>
-          <p className="mt-5 max-w-sm text-[15px] leading-relaxed text-ink/65">
+          <p className="mt-5 max-w-sm text-base leading-relaxed text-ink/75">
             Sérum, hidratante e o cuidado que combina com a sua pele.
           </p>
           <div className="mt-8">
@@ -236,7 +271,7 @@ const PASSOS = [
 
 function ComoFunciona() {
   return (
-    <section className="border-t border-clay/60 bg-white py-14 sm:py-20">
+    <section className="bg-blush py-14 sm:py-20">
       <div className="wrap">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <h2 className="titulo">Como funciona o pedido</h2>
@@ -244,12 +279,12 @@ function ComoFunciona() {
             Entrega, trocas e pagamento
           </Link>
         </div>
-        <ol className="mt-10 grid gap-9 sm:grid-cols-3 sm:gap-10">
+        <ol className="mt-10 grid gap-4 sm:grid-cols-3 sm:gap-5">
           {PASSOS.map((p, i) => (
-            <li key={p.titulo} className="flex gap-4 sm:block">
-              <span className="font-display text-5xl font-light italic leading-none text-pink sm:text-6xl">{i + 1}</span>
-              <div className="sm:mt-4">
-                <h3 className="text-base font-medium">{p.titulo}</h3>
+            <li key={p.titulo} className="flex gap-5 rounded-3xl bg-white p-6 sm:block sm:p-8">
+              <span className="font-display text-6xl font-medium italic leading-none text-laranja sm:text-7xl">{i + 1}</span>
+              <div className="sm:mt-5">
+                <h3 className="text-lg font-semibold">{p.titulo}</h3>
                 <p className="mt-1.5 max-w-[34ch] text-sm leading-relaxed text-mute">{p.texto}</p>
               </div>
             </li>
@@ -338,7 +373,7 @@ function Inspire() {
                 className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
               />
             )
-            const classe = 'group block aspect-square overflow-hidden rounded-md bg-blush'
+            const classe = 'group block aspect-square overflow-hidden rounded-3xl bg-blush'
             return insta ? (
               <a key={g.img} href={insta} target="_blank" rel="noreferrer" className={classe}>
                 {img}

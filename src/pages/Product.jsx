@@ -210,7 +210,7 @@ export default function Product() {
         <div className="mt-5 grid gap-8 md:grid-cols-2 md:gap-12 lg:gap-16">
           {/* fotos */}
           <div className="md:sticky md:top-28 md:self-start">
-            <div className="relative aspect-square overflow-hidden rounded-lg bg-blush">
+            <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-blush">
               <ProductArt
                 key={foto}
                 produto={p}
@@ -236,7 +236,7 @@ export default function Product() {
                     onClick={() => setFoto(i)}
                     aria-label={`Ver foto ${i + 1} de ${fotos.length}`}
                     aria-pressed={foto === i}
-                    className={`h-16 w-16 overflow-hidden rounded-md bg-blush ring-offset-2 ring-offset-cream transition sm:h-20 sm:w-20 ${
+                    className={`h-16 w-16 overflow-hidden rounded-2xl bg-blush ring-offset-2 ring-offset-cream transition sm:h-20 sm:w-20 ${
                       foto === i ? 'ring-2 ring-pink' : 'opacity-70 hover:opacity-100'
                     }`}
                   >
@@ -250,7 +250,7 @@ export default function Product() {
           {/* informações */}
           <div className="md:py-2">
             <p className="text-[13px] text-mute">{p.marca}</p>
-            <h1 className="mt-1.5 font-display text-[2rem] font-light leading-[1.1] tracking-[-0.015em] sm:text-[2.6rem]">
+            <h1 className="mt-1.5 font-display text-[2.3rem] font-medium leading-[1.02] tracking-[-0.025em] sm:text-[3.2rem]">
               {p.nome}
             </h1>
 
@@ -271,7 +271,7 @@ export default function Product() {
             )}
 
             <div className="mt-6 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <span className={`text-[1.9rem] font-semibold leading-none ${fora ? 'text-mute' : 'text-ink'}`}>{brl(fim)}</span>
+              <span className={`text-[2rem] font-semibold leading-none ${fora ? 'text-mute' : 'text-pink'}`}>{brl(fim)}</span>
               {off && !fora && <span className="text-base text-mute line-through">{brl(p.preco)}</span>}
             </div>
             {!fora && (
@@ -380,7 +380,7 @@ export default function Product() {
 
         {/* avaliações */}
         <section id="avaliacoes" className="mt-16 scroll-mt-28 border-t border-clay/70 pt-12">
-          <h2 className="font-display text-[1.7rem] font-light sm:text-[2rem]">O que as clientes dizem</h2>
+          <h2 className="font-display text-[2rem] font-medium tracking-[-0.02em] sm:text-[2.6rem]">O que as clientes dizem</h2>
           {avaliacoes.length === 0 ? (
             <div className="mt-5 flex flex-col items-start gap-4 rounded-xl bg-blush px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
               <p className="max-w-[48ch] text-sm leading-relaxed text-ink/75">
@@ -415,7 +415,7 @@ export default function Product() {
         {/* relacionados */}
         {relacionados.length > 0 && (
           <section className="mt-16 border-t border-clay/70 pt-12">
-            <h2 className="font-display text-[1.7rem] font-light sm:text-[2rem]">Combina com este</h2>
+            <h2 className="font-display text-[2rem] font-medium tracking-[-0.02em] sm:text-[2.6rem]">Combina com este</h2>
             <div className="mt-7 grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-x-6 lg:grid-cols-4">
               {relacionados.map((r) => (
                 <ProductCard key={r.id} produto={r} />

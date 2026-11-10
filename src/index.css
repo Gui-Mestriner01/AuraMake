@@ -28,7 +28,7 @@
     @apply text-[10px] font-medium uppercase tracking-eyebrow text-pink sm:text-[11px];
   }
   .titulo {
-    @apply font-display text-[2rem] font-light leading-[1.08] tracking-[-0.015em] text-ink sm:text-[2.75rem];
+    @apply font-display text-[2.35rem] font-medium leading-none tracking-[-0.025em] text-ink sm:text-[3.5rem];
   }
   .titulo em {
     @apply font-normal italic text-pink;
@@ -38,7 +38,7 @@
     @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-medium transition duration-200 active:scale-[.98];
   }
   .btn-dark {
-    @apply btn bg-ink text-cream hover:bg-ink/90;
+    @apply btn bg-ink text-cream hover:bg-pink;
   }
   .btn-rose {
     @apply btn bg-pink text-white hover:bg-pinkdeep;
@@ -48,13 +48,13 @@
   }
   /* botões retos da vitrine (estilo editorial) */
   .cta {
-    @apply inline-flex items-center justify-center gap-6 rounded-[3px] px-7 py-4 text-[13px] font-medium transition duration-300 active:scale-[.98];
+    @apply inline-flex items-center justify-center gap-4 rounded-full px-8 py-4 text-sm font-semibold transition duration-300 active:scale-[.98];
   }
   .cta-pink {
     @apply cta bg-pink text-white hover:bg-pinkdeep;
   }
   .cta-ink {
-    @apply cta bg-ink text-white hover:bg-black;
+    @apply cta bg-ink text-white hover:bg-pink;
   }
   .cta svg {
     @apply transition-transform duration-300;
@@ -70,7 +70,7 @@
     @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-mute;
   }
   .card {
-    @apply rounded-xl2 border border-clay/70 bg-white shadow-soft;
+    @apply rounded-3xl border border-clay/70 bg-white shadow-soft;
   }
   .chip {
     @apply inline-flex items-center rounded-full px-2.5 py-1 text-[11px] font-medium tracking-wide;

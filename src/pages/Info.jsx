@@ -6,7 +6,7 @@ import { linkWhats, telefoneFormatado } from '../whatsapp'
 
 const Bloco = ({ id, titulo, children }) => (
   <section id={id} className="scroll-mt-28 border-t border-clay/70 py-10 sm:grid sm:grid-cols-[14rem_1fr] sm:gap-10 sm:py-12">
-    <h2 className="font-display text-2xl font-light sm:text-[1.7rem]">{titulo}</h2>
+    <h2 className="font-display text-[1.7rem] font-medium sm:text-[2rem]">{titulo}</h2>
     <div className="mt-4 max-w-[62ch] space-y-3.5 text-[15px] leading-relaxed text-ink/75 sm:mt-1">{children}</div>
   </section>
 )
@@ -16,7 +16,7 @@ export default function Info() {
   useTitulo('Entrega, trocas e pagamento')
   return (
     <div className="wrap pb-16 pt-10 sm:pt-14">
-      <h1 className="font-display text-4xl font-light tracking-[-0.02em] sm:text-5xl">
+      <h1 className="font-display text-[2.8rem] font-medium leading-none tracking-[-0.03em] sm:text-7xl">
         Antes de comprar<span className="text-pink">.</span>
       </h1>
       <p className="mb-10 mt-3 max-w-[52ch] text-[15px] leading-relaxed text-mute">

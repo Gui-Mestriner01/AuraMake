@@ -130,14 +130,14 @@ function Marquee() {
   const frases = ['Beleza é ser você', 'Make your own glow']
   const faixa = [...frases, ...frases, ...frases]
   return (
-    <div className="overflow-hidden bg-pink py-3.5 text-white" aria-hidden>
+    <div className="overflow-hidden bg-laranja py-5 text-ink sm:py-7" aria-hidden>
       <div className="flex w-max animate-marquee items-center [animation-duration:60s]">
         {[0, 1].map((k) => (
           <div key={k} className="flex items-center">
             {faixa.map((f, i) => (
               <span key={i} className="flex items-center">
-                <span className="whitespace-nowrap px-7 font-display text-lg italic">{f}</span>
-                <Asterisco size={16} strokeWidth={1.3} className="text-white/60" />
+                <span className="whitespace-nowrap px-8 font-display text-3xl font-medium italic sm:text-5xl">{f}</span>
+                <Asterisco size={30} strokeWidth={1.6} className="text-white" />
               </span>
             ))}
           </div>
@@ -175,7 +175,7 @@ export default function Layout() {
         <strong className="font-semibold text-pessego">{STORE.cupomBoasVindas}</strong>
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-clay/60 bg-white/95 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-clay/60 bg-cream/95 backdrop-blur">
         <div className="wrap grid grid-cols-[1fr_auto_1fr] items-center py-3 sm:py-4">
           <button
             onClick={() => setMenu(true)}
@@ -194,8 +194,12 @@ export default function Layout() {
               <Link
                 key={l.label}
                 to={l.to}
-                className={`text-[13px] transition hover:text-pink ${
-                  l.destaque || ativo(l.to) ? 'text-pink' : 'text-ink/75'
+                className={`text-sm font-medium transition ${
+                  l.destaque
+                    ? 'rounded-full bg-pink px-4 py-1.5 text-white hover:bg-pinkdeep'
+                    : ativo(l.to)
+                      ? 'text-pink'
+                      : 'text-ink hover:text-pink'
                 }`}
               >
                 {l.label}
@@ -274,46 +278,46 @@ export default function Layout() {
 
       <Marquee />
 
-      <footer className="bg-cream">
+      <footer className="bg-ink text-cream">
         <div className="wrap grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1.2fr]">
           <div>
             <Link to="/" className="group inline-block" aria-label={STORE.nome}>
-              <Logo compacto />
+              <Logo claro />
             </Link>
-            <p className="mt-4 max-w-[26ch] text-[13px] leading-relaxed text-mute">{STORE.slogan}</p>
+            <p className="mt-5 max-w-[24ch] font-display text-xl italic leading-snug text-pessego">{STORE.slogan}</p>
           </div>
 
           <div>
-            <p className="mb-4 text-[13px] font-medium">Loja</p>
-            <ul className="space-y-3 text-[13px] text-mute">
-              <li><Link to="/loja?grupo=maquiagem" className="hover:text-pink">Maquiagem</Link></li>
-              <li><Link to="/loja?cat=skincare" className="hover:text-pink">Skincare</Link></li>
-              <li><Link to="/loja?novidades=1" className="hover:text-pink">Lançamentos</Link></li>
-              <li><Link to="/loja?sale=1" className="hover:text-pink">Sale</Link></li>
+            <p className="mb-4 text-sm font-semibold text-white">Loja</p>
+            <ul className="space-y-3 text-sm text-cream/65">
+              <li><Link to="/loja?grupo=maquiagem" className="hover:text-pessego">Maquiagem</Link></li>
+              <li><Link to="/loja?cat=skincare" className="hover:text-pessego">Skincare</Link></li>
+              <li><Link to="/loja?novidades=1" className="hover:text-pessego">Lançamentos</Link></li>
+              <li><Link to="/loja?sale=1" className="hover:text-pessego">Sale</Link></li>
             </ul>
           </div>
 
           <div>
-            <p className="mb-4 text-[13px] font-medium">Ajuda</p>
-            <ul className="space-y-3 text-[13px] text-mute">
-              <li><Link to="/ajuda#entrega" className="hover:text-pink">Entrega e prazos</Link></li>
-              <li><Link to="/ajuda#trocas" className="hover:text-pink">Trocas e devoluções</Link></li>
-              <li><Link to="/ajuda#pagamento" className="hover:text-pink">Formas de pagamento</Link></li>
-              <li><Link to="/ajuda#sobre" className="hover:text-pink">Sobre a Aura</Link></li>
+            <p className="mb-4 text-sm font-semibold text-white">Ajuda</p>
+            <ul className="space-y-3 text-sm text-cream/65">
+              <li><Link to="/ajuda#entrega" className="hover:text-pessego">Entrega e prazos</Link></li>
+              <li><Link to="/ajuda#trocas" className="hover:text-pessego">Trocas e devoluções</Link></li>
+              <li><Link to="/ajuda#pagamento" className="hover:text-pessego">Formas de pagamento</Link></li>
+              <li><Link to="/ajuda#sobre" className="hover:text-pessego">Sobre a Aura</Link></li>
             </ul>
           </div>
 
           <div>
-            <p className="mb-4 text-[13px] font-medium">Atendimento</p>
-            <ul className="space-y-3 text-[13px] text-mute">
+            <p className="mb-4 text-sm font-semibold text-white">Atendimento</p>
+            <ul className="space-y-3 text-sm text-cream/65">
               <li>
-                <a href={linkWhats()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-pink">
+                <a href={linkWhats()} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-pessego">
                   <Whats size={15} /> {telefoneFormatado}
                 </a>
               </li>
               {STORE.instagram && (
                 <li>
-                  <a href={`https://instagram.com/${STORE.instagram}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-pink">
+                  <a href={`https://instagram.com/${STORE.instagram}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-pessego">
                     <Instagram size={15} /> @{STORE.instagram}
                   </a>
                 </li>
@@ -324,10 +328,10 @@ export default function Layout() {
         </div>
 
         <div className="wrap">
-          <div className="flex flex-col gap-4 border-t border-clay py-6 text-[11px] text-mute sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 border-t border-cream/15 py-6 text-[11px] text-cream/60 sm:flex-row sm:items-center sm:justify-between">
             <ul className="flex flex-wrap items-center gap-1.5" aria-label="Formas de pagamento aceitas">
               {PAGAMENTOS.map((p) => (
-                <li key={p} className="rounded border border-clay bg-white px-2 py-1 text-[10px] text-ink/70">
+                <li key={p} className="rounded-full border border-cream/25 px-2.5 py-1 text-[10px] text-cream/80">
                   {p}
                 </li>
               ))}
@@ -336,7 +340,7 @@ export default function Layout() {
               © {new Date().getFullYear()} {STORE.nome}
               {STORE.cnpj && <> · CNPJ {STORE.cnpj}</>}
             </span>
-            <Link to="/admin" className="hover:text-pink">
+            <Link to="/admin" className="hover:text-pessego">
               Área da proprietária
             </Link>
           </div>

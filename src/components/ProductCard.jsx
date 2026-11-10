@@ -32,7 +32,7 @@ export default function ProductCard({ produto, prioridade = false }) {
 
   return (
     <article className="group flex flex-col">
-      <div className="relative overflow-hidden rounded-md bg-blush">
+      <div className="relative overflow-hidden rounded-[1.4rem] bg-blush">
         <Link to={link} className="block aspect-[4/5] w-full" aria-label={`Ver ${produto.nome}`}>
           <ProductArt
             produto={produto}
@@ -43,8 +43,8 @@ export default function ProductCard({ produto, prioridade = false }) {
 
         {selo && (
           <span
-            className={`pointer-events-none absolute left-2.5 top-2.5 rounded-full px-2.5 py-1 text-[10px] font-medium ${
-              fora ? 'bg-white/90 text-mute' : off ? 'bg-laranja text-white' : 'bg-white/90 text-pink'
+            className={`pointer-events-none absolute left-3 top-3 rounded-full px-3 py-1 text-[11px] font-semibold ${
+              fora ? 'bg-white/90 text-mute' : off ? 'bg-laranja text-white' : 'bg-ink text-white'
             }`}
           >
             {selo}
@@ -62,9 +62,22 @@ export default function ProductCard({ produto, prioridade = false }) {
         >
           {fav ? <CoracaoCheio size={17} /> : <Coracao size={17} />}
         </button>
+
+        {!fora && (
+          <button
+            type="button"
+            onClick={adicionar}
+            className={`absolute bottom-3 right-3 flex h-11 w-11 items-center justify-center rounded-full text-white shadow-pink transition duration-200 hover:scale-110 active:scale-90 ${
+              ok ? 'bg-ink' : 'bg-pink hover:bg-pinkdeep'
+            }`}
+            aria-label={`Adicionar ${produto.nome} à sacola`}
+          >
+            {ok ? <Check size={18} /> : <Sacola size={18} />}
+          </button>
+        )}
       </div>
 
-      <div className="mt-3 flex items-start justify-between gap-2">
+      <div className="mt-3.5 px-1">
         <Link to={link} className="min-w-0 text-left">
           {temTom(produto) && produto.tomNome && (
             <p className="mb-1.5 flex items-center gap-1.5 text-[11px] text-mute">
@@ -72,7 +85,7 @@ export default function ProductCard({ produto, prioridade = false }) {
               <span className="truncate">{produto.tomNome}</span>
             </p>
           )}
-          <h3 className="line-clamp-2 text-[13px] leading-snug text-ink transition-colors group-hover:text-pink sm:text-sm">
+          <h3 className="line-clamp-2 text-sm font-medium leading-snug text-ink transition-colors group-hover:text-pink sm:text-[15px]">
             {produto.nome}
           </h3>
           {media && (
@@ -81,7 +94,7 @@ export default function ProductCard({ produto, prioridade = false }) {
             </p>
           )}
           <p className="mt-1.5 flex flex-wrap items-baseline gap-x-2">
-            <span className={`text-sm font-medium ${fora ? 'text-mute' : 'text-ink'}`}>{brl(fim)}</span>
+            <span className={`text-base font-semibold ${fora ? 'text-mute' : off ? 'text-pink' : 'text-ink'}`}>{brl(fim)}</span>
             {off && !fora && <span className="text-[11px] text-mute line-through">{brl(produto.preco)}</span>}
           </p>
           {parcela && !fora && (
@@ -91,18 +104,6 @@ export default function ProductCard({ produto, prioridade = false }) {
           )}
         </Link>
 
-        {!fora && (
-          <button
-            type="button"
-            onClick={adicionar}
-            className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border transition active:scale-90 ${
-              ok ? 'border-pink bg-pink text-white' : 'border-clay text-ink/70 hover:border-pink hover:text-pink'
-            }`}
-            aria-label={`Adicionar ${produto.nome} à sacola`}
-          >
-            {ok ? <Check size={16} /> : <Sacola size={16} />}
-          </button>
-        )}
       </div>
     </article>
   )

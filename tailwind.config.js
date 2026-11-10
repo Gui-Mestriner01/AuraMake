@@ -5,33 +5,33 @@ export default {
     extend: {
       colors: {
         // fundos
-        cream: '#FFFAF7',
-        sand: '#FBF1EC',
-        blush: '#FDF1EC',
-        pessego: '#F8D6C8',
-        clay: '#EFE2DA',
+        cream: '#FFF7F9',
+        sand: '#FFEFF3',
+        blush: '#FFE6EE',
+        pessego: '#FFD0BD',
+        clay: '#F1D3DD',
         // texto
-        ink: '#2B2522',
-        mute: '#8A7A71',
+        ink: '#2A0E1B',
+        mute: '#85616F',
         // marca
         pink: '#E8106E',
-        pinkdeep: '#C40B5B',
+        pinkdeep: '#B80A55',
         laranja: '#F26A21',
         // aliases usados pelo painel administrativo
         rose: '#E8106E',
-        rosedeep: '#C40B5B',
+        rosedeep: '#B80A55',
         gold: '#F26A21'
       },
       fontFamily: {
-        display: ['Fraunces', 'Georgia', 'serif'],
+        display: ['"Bodoni Moda"', 'Didot', 'Georgia', 'serif'],
         sans: ['"DM Sans"', 'system-ui', 'sans-serif']
       },
       letterSpacing: {
         eyebrow: '0.28em'
       },
       boxShadow: {
-        soft: '0 1px 2px rgba(43,37,34,.04), 0 12px 32px -12px rgba(43,37,34,.14)',
-        lift: '0 2px 4px rgba(43,37,34,.05), 0 24px 48px -16px rgba(43,37,34,.22)',
+        soft: '0 1px 2px rgba(42,14,27,.04), 0 12px 32px -12px rgba(42,14,27,.16)',
+        lift: '0 2px 4px rgba(42,14,27,.06), 0 24px 48px -16px rgba(42,14,27,.28)',
         pink: '0 10px 30px -10px rgba(232,16,110,.55)'
       },
       borderRadius: { xl2: '1.25rem' },
