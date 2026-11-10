@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react'
-import { useOutletContext, useSearchParams } from 'react-router-dom'
-import { CATEGORIAS } from '../config'
+import { Link, useOutletContext, useSearchParams } from 'react-router-dom'
+import { CATEGORIAS, STORE } from '../config'
 import { esgotado, precoFinal, useLoja } from '../store/StoreContext'
 import ProductCard from '../components/ProductCard'
-import ProductDrawer from '../components/ProductDrawer'
+import ProductModal from '../components/ProductModal'
+import { Chevron, Whats } from '../components/Icons'
+import { linkWhats } from '../whatsapp'
 
 const ORDENS = [
   { id: 'relevancia', nome: 'Relevância' },
@@ -13,91 +15,68 @@ const ORDENS = [
 ]
 
 export default function Catalog() {
-  const { produtos } = useLoja()
+  const { produtos, favoritos } = useLoja()
   const { abrirCarrinho } = useOutletContext()
   const [params, setParams] = useSearchParams()
   const [aberto, setAberto] = useState(null)
   const [ordem, setOrdem] = useState('relevancia')
 
   const cat = params.get('cat') || ''
+  const grupo = params.get('grupo') || ''
   const q = (params.get('q') || '').toLowerCase().trim()
   const sale = params.get('sale') === '1'
   const novidades = params.get('novidades') === '1'
+  const fav = params.get('fav') === '1'
 
   const lista = useMemo(() => {
     let r = [...produtos]
     if (cat) r = r.filter((p) => p.categoria === cat)
+    if (grupo === 'maquiagem') r = r.filter((p) => p.categoria !== 'skincare')
     if (sale) r = r.filter((p) => (p.desconto || 0) > 0)
     if (novidades) r = r.filter((p) => p.selo === 'Novo')
-    if (q) {
-      r = r.filter((p) =>
-        [p.nome, p.marca, p.descricao].join(' ').toLowerCase().includes(q)
-      )
-    }
+    if (fav) r = r.filter((p) => favoritos.includes(p.id))
+    if (q) r = r.filter((p) => [p.nome, p.marca, p.descricao].join(' ').toLowerCase().includes(q))
     if (ordem === 'menor') r.sort((a, b) => precoFinal(a) - precoFinal(b))
     if (ordem === 'maior') r.sort((a, b) => precoFinal(b) - precoFinal(a))
     if (ordem === 'az') r.sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'))
     // esgotados sempre no fim
     return r.sort((a, b) => Number(esgotado(a)) - Number(esgotado(b)))
-  }, [produtos, cat, q, sale, novidades, ordem])
+  }, [produtos, favoritos, cat, grupo, q, sale, novidades, fav, ordem])
 
-  const trocarCat = (slug) => {
-    const novo = new URLSearchParams(params)
-    slug ? novo.set('cat', slug) : novo.delete('cat')
-    novo.delete('sale')
-    novo.delete('novidades')
-    setParams(novo)
-  }
+  const trocarCat = (slug) => setParams(slug ? { cat: slug } : {})
 
   const titulo = sale
-    ? 'Promoções'
+    ? 'Sale'
     : novidades
       ? 'Lançamentos'
-      : q
-        ? `Resultados para “${q}”`
-        : CATEGORIAS.find((c) => c.slug === cat)?.nome || 'Todos os produtos'
+      : fav
+        ? 'Favoritos'
+        : q
+          ? `Resultados para “${q}”`
+          : grupo === 'maquiagem'
+            ? 'Maquiagem'
+            : CATEGORIAS.find((c) => c.slug === cat)?.nome || 'Todos os produtos'
+
+  const semFiltro = !cat && !sale && !novidades && !fav && !grupo && !q
+  const produtoAberto = aberto ? produtos.find((p) => p.id === aberto.id) ?? null : null
 
   return (
     <>
-      <section className="wrap py-10 sm:py-14">
-        <h1 className="font-display text-3xl sm:text-4xl">{titulo}</h1>
-        <p className="mt-2 text-sm text-mute">
-          {lista.length} {lista.length === 1 ? 'produto' : 'produtos'}
-        </p>
-
-        <div className="thin-scroll -mx-5 mt-7 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:px-0">
-          <button
-            onClick={() => trocarCat('')}
-            className={`chip shrink-0 border px-4 py-2 text-xs ${
-              !cat && !sale && !novidades
-                ? 'border-ink bg-ink text-cream'
-                : 'border-clay bg-white text-ink/80 hover:border-rose'
-            }`}
-          >
-            Todos
-          </button>
-          {CATEGORIAS.map((c) => (
-            <button
-              key={c.slug}
-              onClick={() => trocarCat(c.slug)}
-              className={`chip shrink-0 border px-4 py-2 text-xs ${
-                cat === c.slug
-                  ? 'border-ink bg-ink text-cream'
-                  : 'border-clay bg-white text-ink/80 hover:border-rose'
-              }`}
-            >
-              {c.nome}
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-5 flex items-center justify-end">
-          <label className="flex items-center gap-2 text-xs text-mute">
-            Ordenar
+      <section className="wrap pb-16 pt-10 sm:pt-14">
+        <h1 className="font-display text-4xl font-light tracking-[-0.02em] sm:text-5xl">
+          {titulo}
+          <span className="text-pink">.</span>
+        </h1>
+        <div className="mt-2 flex items-center justify-between gap-4">
+          <p className="text-sm text-mute">
+            {lista.length} {lista.length === 1 ? 'produto' : 'produtos'}
+          </p>
+          <label className="relative flex shrink-0 items-center">
             <select
               value={ordem}
               onChange={(e) => setOrdem(e.target.value)}
-              className="rounded-full border border-clay bg-white px-3 py-1.5 text-xs text-ink outline-none focus:border-rose"
+              className="cursor-pointer appearance-none bg-transparent py-2 pl-2 pr-6 text-[13px] text-ink/70 outline-none"
+              aria-label="Ordenar produtos"
             >
               {ORDENS.map((o) => (
                 <option key={o.id} value={o.id}>
@@ -105,19 +84,62 @@ export default function Catalog() {
                 </option>
               ))}
             </select>
+            <Chevron size={14} className="pointer-events-none absolute right-0 text-ink/60" />
           </label>
         </div>
 
+        <div className="mt-6 border-b border-clay/70 pb-4">
+          <div className="sem-scroll -mx-4 flex gap-1 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+            {[{ slug: '', nome: 'Todos' }, ...CATEGORIAS].map((c) => {
+              const ativo = c.slug ? cat === c.slug : semFiltro
+              return (
+                <button
+                  key={c.slug || 'todos'}
+                  onClick={() => trocarCat(c.slug)}
+                  className={`shrink-0 rounded-full px-4 py-2 text-[13px] transition ${
+                    ativo ? 'bg-pink text-white' : 'text-ink/70 hover:bg-blush hover:text-pink'
+                  }`}
+                >
+                  {c.nome}
+                </button>
+              )
+            })}
+          </div>
+
+        </div>
+
         {lista.length === 0 ? (
-          <div className="py-24 text-center">
-            <p className="font-display text-xl">Nada por aqui ainda</p>
-            <p className="mt-2 text-sm text-mute">
-              Tente outra categoria ou fale com a gente no WhatsApp — pode ser que a gente consiga
-              encomendar.
+          <div className="mx-auto max-w-sm py-24 text-center">
+            <p className="font-display text-2xl font-light">
+              {fav ? 'Nenhum favorito ainda' : 'Nada por aqui ainda'}
             </p>
+            <p className="mt-3 text-sm leading-relaxed text-mute">
+              {fav
+                ? 'Toque no coração dos produtos que você gostar para guardá-los aqui.'
+                : 'Tente outra categoria ou fale com a gente — pode ser que a gente consiga encomendar.'}
+            </p>
+            <div className="mt-7 flex justify-center gap-2">
+              <Link to="/loja" className="btn-ghost text-xs">
+                Ver todos
+              </Link>
+              {!fav && (
+                <a
+                  href={linkWhats(
+                    q
+                      ? `Olá! Procurei por "${q}" no site da *${STORE.nome}* e não encontrei. Vocês têm ou conseguem encomendar? 😊`
+                      : undefined
+                  )}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn-rose text-xs"
+                >
+                  <Whats size={16} /> WhatsApp
+                </a>
+              )}
+            </div>
           </div>
         ) : (
-          <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-x-3 gap-y-9 sm:gap-x-6 lg:grid-cols-4">
             {lista.map((p) => (
               <ProductCard key={p.id} produto={p} onAbrir={setAberto} />
             ))}
@@ -125,7 +147,7 @@ export default function Catalog() {
         )}
       </section>
 
-      <ProductDrawer produto={aberto} aoFechar={() => setAberto(null)} aoAdicionar={abrirCarrinho} />
+      <ProductModal produto={produtoAberto} aoFechar={() => setAberto(null)} aoAdicionar={abrirCarrinho} />
     </>
   )
 }

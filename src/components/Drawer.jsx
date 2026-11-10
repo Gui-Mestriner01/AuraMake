@@ -23,12 +23,12 @@ export default function Drawer({ aberto, aoFechar, titulo, children, rodape, lar
         }`}
       />
       <aside
-        className={`absolute right-0 top-0 flex h-full w-full ${largura} flex-col bg-cream shadow-lift transition-transform duration-300 ${
-          aberto ? 'translate-x-0' : 'translate-x-full'
+        className={`absolute right-0 top-0 flex h-full w-full ${largura} flex-col bg-cream transition-[transform,box-shadow] duration-500 ease-[cubic-bezier(.22,1,.36,1)] ${
+          aberto ? 'translate-x-0 shadow-lift' : 'translate-x-full'
         }`}
       >
-        <header className="flex items-center justify-between border-b border-clay/70 px-5 py-4">
-          <h2 className="font-display text-lg">{titulo}</h2>
+        <header className="flex items-center justify-between border-b border-clay/70 bg-white px-5 py-4">
+          <h2 className="font-display text-xl font-light">{titulo}</h2>
           <button onClick={aoFechar} className="rounded-full p-2 text-mute hover:bg-sand hover:text-ink" aria-label="Fechar">
             <X />
           </button>

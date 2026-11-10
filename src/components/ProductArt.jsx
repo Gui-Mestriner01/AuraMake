@@ -185,6 +185,7 @@ export default function ProductArt({ produto, className = '' }) {
         src={produto.image}
         alt={produto.nome}
         loading="lazy"
+        decoding="async"
         className={`h-full w-full object-cover ${className}`}
       />
     )
@@ -203,7 +204,7 @@ export default function ProductArt({ produto, className = '' }) {
       <defs>
         <radialGradient id={id} cx="50%" cy="38%" r="62%">
           <stop offset="0%" stopColor="#FFFFFF" />
-          <stop offset="100%" stopColor="#F0E5DC" />
+          <stop offset="100%" stopColor="#FBE1D7" />
         </radialGradient>
       </defs>
       <rect width="200" height="240" fill={`url(#${id})`} />

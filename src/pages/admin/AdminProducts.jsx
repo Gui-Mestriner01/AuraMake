@@ -123,7 +123,7 @@ function Formulario({ dados, setDados }) {
           className="field"
           value={dados.image}
           onChange={set('image')}
-          placeholder="https://... ou /fotos/batom.jpg"
+          placeholder="https://... ou fotos/batom.webp"
         />
         <p className="mt-1.5 text-[11px] text-mute">
           Com a foto preenchida, ela substitui a ilustração na vitrine.

@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { SEED_PRODUCTS } from '../data/products'
 
-const KEY = 'aura:loja:v1'
+const KEY = 'aura:loja:v2'
 const Ctx = createContext(null)
 
 function carregar() {
@@ -23,15 +23,16 @@ export function StoreProvider({ children }) {
   const [produtos, setProdutos] = useState(inicial?.produtos ?? SEED_PRODUCTS)
   const [vendas, setVendas] = useState(inicial?.vendas ?? [])
   const [carrinho, setCarrinho] = useState(inicial?.carrinho ?? [])
+  const [favoritos, setFavoritos] = useState(inicial?.favoritos ?? [])
   const [logado, setLogado] = useState(() => sessionStorage.getItem('aura:admin') === '1')
 
   useEffect(() => {
     try {
-      localStorage.setItem(KEY, JSON.stringify({ produtos, vendas, carrinho }))
+      localStorage.setItem(KEY, JSON.stringify({ produtos, vendas, carrinho, favoritos }))
     } catch {
       /* quota cheia — segue sem persistir */
     }
-  }, [produtos, vendas, carrinho])
+  }, [produtos, vendas, carrinho, favoritos])
 
   /* ---------- produtos ---------- */
   const criarProduto = (dados) =>
@@ -60,6 +61,7 @@ export function StoreProvider({ children }) {
   const removerProduto = (id) => {
     setProdutos((lista) => lista.filter((p) => p.id !== id))
     setCarrinho((c) => c.filter((i) => i.id !== id))
+    setFavoritos((f) => f.filter((x) => x !== id))
   }
 
   const aplicarDesconto = (ids, porcentagem) =>
@@ -85,6 +87,11 @@ export function StoreProvider({ children }) {
     )
 
   const limparCarrinho = () => setCarrinho([])
+
+  /* ---------- favoritos ---------- */
+  const alternarFavorito = (id) =>
+    setFavoritos((f) => (f.includes(id) ? f.filter((x) => x !== id) : [...f, id]))
+  const ehFavorito = (id) => favoritos.includes(id)
 
   /* ---------- vendas ---------- */
   const registrarVenda = (venda) => {
@@ -119,6 +126,7 @@ export function StoreProvider({ children }) {
     setProdutos(SEED_PRODUCTS)
     setVendas([])
     setCarrinho([])
+    setFavoritos([])
   }
 
   const itensCarrinho = useMemo(
@@ -149,6 +157,9 @@ export function StoreProvider({ children }) {
     addCarrinho,
     mudarQtd,
     limparCarrinho,
+    favoritos,
+    alternarFavorito,
+    ehFavorito,
     registrarVenda,
     mudarStatusVenda,
     removerVenda,

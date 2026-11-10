@@ -1,5 +1,6 @@
-// Catálogo inicial. Cada produto aceita `image` (URL ou /public/...) —
-// se estiver vazio, o site desenha a ilustração do tipo automaticamente.
+// Catálogo inicial. Cada produto aceita `image`: uma URL completa ou um arquivo
+// dentro de public/ (ex.: 'fotos/batom.webp'). Se ficar vazio, o site desenha a
+// ilustração do tipo automaticamente. Fotos de exemplo: Unsplash (licença livre).
 export const SEED_PRODUCTS = [
   {
     id: 'p01',
@@ -12,7 +13,7 @@ export const SEED_PRODUCTS = [
     desconto: 0,
     estoque: 14,
     selo: 'Novo',
-    image: '',
+    image: 'fotos/batom-matte.webp',
     descricao:
       'Acabamento matte aveludado com 8h de permanência. Textura leve, não resseca e constrói cor em camadas.'
   },
@@ -27,7 +28,7 @@ export const SEED_PRODUCTS = [
     desconto: 15,
     estoque: 6,
     selo: '',
-    image: '',
+    image: 'fotos/paleta.webp',
     descricao:
       'Doze tons entre mates e cintilantes para o olhar do dia a dia ao da noite. Alta pigmentação e baixa queda.'
   },
@@ -42,7 +43,7 @@ export const SEED_PRODUCTS = [
     desconto: 0,
     estoque: 9,
     selo: 'Mais vendido',
-    image: '',
+    image: 'fotos/base.webp',
     descricao:
       'Cobertura construível com efeito natural, proteção solar FPS 30 e ácido hialurônico na fórmula.'
   },
@@ -57,13 +58,13 @@ export const SEED_PRODUCTS = [
     desconto: 0,
     estoque: 0,
     selo: '',
-    image: '',
+    image: 'fotos/mascara.webp',
     descricao:
       'Escova curva que separa e alonga. Fórmula à prova de borrões, remove com água morna.'
   },
   {
     id: 'p05',
-    nome: 'Blush Compacto Pêssego',
+    nome: 'Blush Compacto Peach',
     marca: 'Aura',
     categoria: 'pele',
     tipo: 'blush',
@@ -72,12 +73,12 @@ export const SEED_PRODUCTS = [
     desconto: 20,
     estoque: 21,
     selo: '',
-    image: '',
+    image: 'fotos/blush.webp',
     descricao: 'Pó sedoso com brilho sutil, fácil de esfumar e com fixação de longa duração.'
   },
   {
     id: 'p06',
-    nome: 'Kit 5 Pincéis Profissionais',
+    nome: 'Kit Pincéis Rosé Profissional',
     marca: 'Aura',
     categoria: 'pinceis',
     tipo: 'pincel',
@@ -86,13 +87,13 @@ export const SEED_PRODUCTS = [
     desconto: 0,
     estoque: 4,
     selo: 'Novo',
-    image: '',
+    image: 'fotos/pinceis.webp',
     descricao:
       'Cerdas sintéticas macias, cabo em madeira e virola dourada. Inclui estojo para viagem.'
   },
   {
     id: 'p07',
-    nome: 'Gloss Labial Espelhado',
+    nome: 'Lip Gloss Rosé',
     marca: 'Aura',
     categoria: 'labios',
     tipo: 'gloss',
@@ -101,12 +102,12 @@ export const SEED_PRODUCTS = [
     desconto: 0,
     estoque: 18,
     selo: '',
-    image: '',
+    image: 'fotos/gloss.webp',
     descricao: 'Brilho de vidro, textura não pegajosa e óleo de jojoba para hidratar os lábios.'
   },
   {
     id: 'p08',
-    nome: 'Sérum Vitamina C 10%',
+    nome: 'Sérum Facial Glow Vitamina C',
     marca: 'Aura Care',
     categoria: 'skincare',
     tipo: 'serum',
@@ -115,7 +116,7 @@ export const SEED_PRODUCTS = [
     desconto: 10,
     estoque: 7,
     selo: '',
-    image: '',
+    image: 'fotos/serum.webp',
     descricao: 'Antioxidante que uniformiza o tom e devolve viço. Uso pela manhã, antes do protetor.'
   },
   {
@@ -129,7 +130,7 @@ export const SEED_PRODUCTS = [
     desconto: 0,
     estoque: 11,
     selo: '',
-    image: '',
+    image: 'fotos/hidratante.webp',
     descricao: 'Textura em gel-creme com pantenol e aveia, indicada para peles sensíveis.'
   },
   {
@@ -143,7 +144,7 @@ export const SEED_PRODUCTS = [
     desconto: 0,
     estoque: 3,
     selo: '',
-    image: '',
+    image: 'fotos/po.webp',
     descricao: 'Partículas ultrafinas que selam a maquiagem sem deixar aspecto seco ou acinzentado.'
   },
   {
@@ -157,7 +158,7 @@ export const SEED_PRODUCTS = [
     desconto: 0,
     estoque: 16,
     selo: '',
-    image: '',
+    image: 'fotos/delineador.webp',
     descricao: 'Ponta fina e flexível para traços precisos. Secagem rápida e resistente à água.'
   },
   {
@@ -171,7 +172,7 @@ export const SEED_PRODUCTS = [
     desconto: 25,
     estoque: 8,
     selo: '',
-    image: '',
+    image: 'fotos/batom-liquido.webp',
     descricao: 'Aplicador de precisão, cor intensa em uma passada e conforto de uso prolongado.'
   }
 ]

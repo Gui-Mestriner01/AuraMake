@@ -123,3 +123,57 @@ export const Whats = (p) => (
     <path d="M9 9.5c0 3 2.5 5.5 5.5 5.5.6 0 1-.5 1-1l-1.4-.8-1 .9a5 5 0 0 1-2.2-2.2l.9-1L11 9.5c0-.5-.4-1-1-1-.5 0-1 .4-1 1Z" />
   </Svg>
 )
+
+/* ---------- vitrine (traço fino, estilo editorial) ---------- */
+export const SetaDiag = (p) => (
+  <Svg {...p}>
+    <path d="M7 17 17 7M8 7h9v9" />
+  </Svg>
+)
+export const Chevron = (p) => (
+  <Svg {...p}>
+    <path d="m6 9 6 6 6-6" />
+  </Svg>
+)
+export const Ajustes = (p) => (
+  <Svg {...p}>
+    <path d="M4 7h10M18 7h2M4 17h4M12 17h8" />
+    <circle cx="16" cy="7" r="2" />
+    <circle cx="10" cy="17" r="2" />
+  </Svg>
+)
+export const Escudo = (p) => (
+  <Svg {...p}>
+    <path d="M12 3 5 6v5c0 4.4 3 8.3 7 10 4-1.7 7-5.6 7-10V6l-7-3Z" />
+    <path d="m9 12 2 2 4-4" />
+  </Svg>
+)
+export const Instagram = (p) => (
+  <Svg {...p}>
+    <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+    <circle cx="12" cy="12" r="4" />
+    <circle cx="17.2" cy="6.8" r=".6" fill="currentColor" />
+  </Svg>
+)
+/** asterisco de 8 pontas — assinatura visual da marca */
+export const Asterisco = ({ size = 20, strokeWidth = 1.4, ...rest }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke="currentColor" strokeWidth={strokeWidth} strokeLinecap="round" {...rest}>
+    <path d="M12 2v20M2 12h20M4.9 4.9l14.2 14.2M19.1 4.9 4.9 19.1" />
+  </svg>
+)
+/** brilho de 4 pontas, preenchido */
+export const Brilho = ({ size = 16, ...rest }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" {...rest}>
+    <path d="M12 0c.6 6.4 5.6 11.4 12 12-6.4.6-11.4 5.6-12 12-.6-6.4-5.6-11.4-12-12C6.4 11.4 11.4 6.4 12 0Z" />
+  </svg>
+)
+export const Estrela = ({ size = 10, ...rest }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" {...rest}>
+    <path d="m12 2.5 2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9L12 2.5Z" />
+  </svg>
+)
+export const CoracaoCheio = ({ size = 20, ...rest }) => (
+  <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" {...rest}>
+    <path d="M12 20s-7-4.3-7-9a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 4.7-7 9-7 9Z" />
+  </svg>
+)
