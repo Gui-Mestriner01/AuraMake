@@ -7,7 +7,7 @@ import { Coracao, CoracaoCheio, Sacola, Whats, X } from './Icons'
 
 /** Detalhe do produto em um cartão centralizado (abre ao tocar no item). */
 export default function ProductModal({ produto, aoFechar, aoAdicionar }) {
-  const { addCarrinho, alternarFavorito, ehFavorito } = useLoja()
+  const { addCarrinho, alternarFavorito, ehFavorito, avisar } = useLoja()
   const cartaoRef = useRef(null)
 
   // guarda o último produto para a animação de saída não piscar vazia
@@ -40,12 +40,15 @@ export default function ProductModal({ produto, aoFechar, aoAdicionar }) {
   const categoria = CATEGORIAS.find((c) => c.slug === p.categoria)?.nome ?? p.categoria
 
   const adicionar = () => {
-    addCarrinho(p.id, 1)
-    aoFechar()
-    aoAdicionar?.()
+    if (addCarrinho(p.id, 1) > 0) {
+      aoFechar()
+      aoAdicionar?.()
+    } else {
+      avisar('Você já tem na sacola todas as unidades disponíveis')
+    }
   }
 
-  const avisar = () =>
+  const avisarChegada = () =>
     abrirWhats(
       `Olá! 😊 Vi no site da *${STORE.nome}* que o *${p.nome}* está esgotado.\n\n` +
         'Pode me avisar quando ele voltar? Fico no aguardo! 💕'
@@ -120,7 +123,7 @@ export default function ProductModal({ produto, aoFechar, aoAdicionar }) {
           </p>
 
           <button
-            onClick={fora ? avisar : adicionar}
+            onClick={fora ? avisarChegada : adicionar}
             className="mt-4 flex w-full shrink-0 items-center justify-center gap-3 rounded-[4px] bg-pink py-3.5 text-[15px] font-medium text-white transition hover:bg-pinkdeep active:scale-[.99]"
           >
             {fora ? (

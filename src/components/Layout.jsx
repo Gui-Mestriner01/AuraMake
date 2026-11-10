@@ -5,6 +5,8 @@ import { brl, precoFinal, semAcento, useLoja } from '../store/StoreContext'
 import { Asterisco, Coracao, Instagram, Lupa, Menu, Sacola, Whats, X } from './Icons'
 import CartDrawer from './CartDrawer'
 import ProductArt from './ProductArt'
+import ProductModal from './ProductModal'
+import LinkProduto from './LinkProduto'
 import Toast from './Toast'
 import { linkWhats, telefoneFormatado } from '../whatsapp'
 import Logo from './Logo'
@@ -94,7 +96,7 @@ function Busca({ aberta, fechar }) {
               <ul className="divide-y divide-clay/50">
                 {achados.slice(0, 6).map((p) => (
                   <li key={p.id}>
-                    <Link to={`/produto/${p.id}`} onClick={sair} className="flex items-center gap-3 py-2.5 transition hover:text-pink">
+                    <LinkProduto id={p.id} onClick={sair} className="flex items-center gap-3 py-2.5 transition hover:text-pink">
                       <span className="h-12 w-12 shrink-0 overflow-hidden rounded bg-blush">
                         <ProductArt produto={p} prioridade />
                       </span>
@@ -102,7 +104,7 @@ function Busca({ aberta, fechar }) {
                       <span className="shrink-0 text-sm text-mute">
                         {p.estoque > 0 ? brl(precoFinal(p)) : 'Esgotado'}
                       </span>
-                    </Link>
+                    </LinkProduto>
                   </li>
                 ))}
               </ul>
@@ -148,7 +150,9 @@ function Marquee() {
 }
 
 export default function Layout() {
-  const { qtdCarrinho, favoritos, sacolaAberta, abrirSacola, fecharSacola } = useLoja()
+  const { produtos, qtdCarrinho, favoritos, sacolaAberta, abrirSacola, fecharSacola, produtoAbertoId, fecharProduto } =
+    useLoja()
+  const produtoAberto = produtoAbertoId ? produtos.find((p) => p.id === produtoAbertoId) ?? null : null
   const [menu, setMenu] = useState(false)
   const [busca, setBusca] = useState(false)
   const { pathname, search, hash } = useLocation()
@@ -157,12 +161,13 @@ export default function Layout() {
   useEffect(() => {
     setMenu(false)
     setBusca(false)
+    fecharProduto()
     if (hash) {
       document.getElementById(hash.slice(1))?.scrollIntoView()
     } else {
       window.scrollTo({ top: 0, behavior: 'instant' })
     }
-  }, [pathname, search, hash])
+  }, [pathname, search, hash, fecharProduto])
 
   const ativo = (to) => (to === '/' ? pathname === '/' && !search : pathname + search === to)
 
@@ -354,7 +359,7 @@ export default function Layout() {
         rel="noreferrer"
         aria-label="Tirar dúvida pelo WhatsApp"
         className={`group fixed bottom-4 right-4 z-30 flex h-14 items-center rounded-full bg-[#1FAF54] pl-[15px] pr-[15px] text-white shadow-lift transition-all duration-300 hover:bg-[#178F44] sm:bottom-6 sm:right-6 ${
-          sacolaAberta || menu ? 'pointer-events-none translate-y-4 opacity-0' : ''
+          sacolaAberta || menu || produtoAberto ? 'pointer-events-none translate-y-4 opacity-0' : ''
         } ${pathname.startsWith('/produto/') ? 'max-sm:hidden' : ''}`}
       >
         <Whats size={26} />
@@ -364,6 +369,7 @@ export default function Layout() {
       </a>
 
       <Toast />
+      <ProductModal produto={produtoAberto} aoFechar={fecharProduto} aoAdicionar={abrirSacola} />
       <CartDrawer aberto={sacolaAberta} aoFechar={fecharSacola} />
     </div>
   )

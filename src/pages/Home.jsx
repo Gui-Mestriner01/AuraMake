@@ -4,6 +4,7 @@ import { AVALIACOES } from '../data/avaliacoes'
 import { esgotado, temTom, useLoja } from '../store/StoreContext'
 import useTitulo from '../hooks/useTitulo'
 import ProductCard from '../components/ProductCard'
+import LinkProduto from '../components/LinkProduto'
 import Estrelas from '../components/Estrelas'
 import Tom from '../components/Tom'
 import { Caminhao, Escudo, Instagram, SetaDiag, Whats } from '../components/Icons'
@@ -12,72 +13,40 @@ import { Caminhao, Escudo, Instagram, SetaDiag, Whats } from '../components/Icon
 /* Hero                                                                */
 /* ------------------------------------------------------------------ */
 
-/** Selo giratório do cupom, colado na foto do hero. */
-function Selo() {
-  return (
-    <div className="absolute -bottom-7 -left-9 h-32 w-32 sm:-left-14 sm:h-40 sm:w-40" aria-hidden>
-      <svg viewBox="0 0 120 120" className="h-full w-full drop-shadow-lg">
-        <circle cx="60" cy="60" r="60" fill="#F26A21" />
-        <defs>
-          <path id="selo-arco" d="M60,60 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0" />
-        </defs>
-        <g className="animate-girar" style={{ transformOrigin: '60px 60px' }}>
-          <text fontSize="9.5" fontWeight="700" fill="#2A0E1B" textLength="276" lengthAdjust="spacing">
-            <textPath href="#selo-arco" textLength="276" lengthAdjust="spacing">
-              NA PRIMEIRA COMPRA ✳ CUPOM {STORE.cupomBoasVindas} ✳
-            </textPath>
-          </text>
-        </g>
-        <text
-          x="60"
-          y="71"
-          textAnchor="middle"
-          fontSize="32"
-          fontWeight="700"
-          fontStyle="italic"
-          fill="#fff"
-          style={{ fontFamily: '"Bodoni Moda", Georgia, serif' }}
-        >
-          {STORE.cupomDesconto}%
-        </text>
-      </svg>
-    </div>
-  )
-}
-
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-pink text-white">
-      <div className="wrap grid items-center gap-14 pb-20 pt-12 lg:grid-cols-[1.15fr_.85fr] lg:gap-8 lg:py-20">
-        <div>
-          <h1 className="font-display text-[3.7rem] font-medium leading-[.9] tracking-[-0.035em] sm:text-[5.5rem] xl:text-[7.25rem]">
+    <section className="relative overflow-hidden bg-blush">
+      {/* foto: no celular fica em cima; no computador ocupa a metade direita */}
+      <div className="relative h-[46svh] min-h-[300px] lg:absolute lg:inset-y-0 lg:left-[46%] lg:right-0 lg:h-auto">
+        <img
+          src="/fotos/hero-1.webp"
+          alt="Maquiagem rosa com pele iluminada"
+          fetchpriority="high"
+          className="h-full w-full object-cover object-[45%_30%]"
+        />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-blush to-transparent lg:inset-y-0 lg:left-0 lg:h-auto lg:w-40 lg:bg-gradient-to-r" />
+      </div>
+
+      <div className="wrap relative -mt-6 pb-14 lg:mt-0 lg:flex lg:min-h-[clamp(520px,calc(100svh-140px),660px)] lg:items-center lg:py-16">
+        <div className="max-w-xl">
+          <h1 className="font-display text-[3.2rem] font-medium leading-[.95] tracking-[-0.03em] text-ink sm:text-[4.5rem] xl:text-[5.5rem]">
             <span className="block animate-fade-up">Sua beleza.</span>
-            <em className="block animate-fade-up italic text-pessego [animation-delay:90ms]">Seu momento.</em>
+            <em className="block animate-fade-up italic text-pink [animation-delay:90ms]">Seu momento.</em>
           </h1>
-          <p className="mt-7 max-w-[34ch] animate-fade-up text-base leading-relaxed text-white/85 [animation-delay:180ms] sm:text-lg">
+          <p className="mt-6 max-w-[36ch] animate-fade-up text-base leading-relaxed text-ink/70 [animation-delay:180ms]">
             Maquiagem e skincare originais, com entrega em {STORE.regiao} e envio para todo o Brasil.
           </p>
-          <div className="mt-9 flex animate-fade-up flex-wrap items-center gap-x-7 gap-y-4 [animation-delay:260ms]">
-            <Link to="/loja" className="cta bg-white text-pink hover:bg-ink hover:text-white">
+          <div className="mt-8 flex animate-fade-up flex-wrap items-center gap-x-7 gap-y-4 [animation-delay:260ms]">
+            <Link to="/loja" className="cta-pink">
               Ver produtos <SetaDiag size={17} />
             </Link>
-            <Link to="/loja?sale=1" className="text-sm font-medium underline decoration-pessego decoration-2 underline-offset-[7px] hover:text-pessego">
+            <Link
+              to="/loja?sale=1"
+              className="text-sm font-medium text-ink underline decoration-pink/40 decoration-2 underline-offset-[7px] hover:text-pink"
+            >
               Ofertas da semana
             </Link>
           </div>
-        </div>
-
-        {/* foto em arco, a forma que se repete nas categorias e no banner */}
-        <div className="relative mx-auto w-[74%] max-w-[400px] lg:mr-4">
-          <div className="aspect-[4/5] overflow-hidden rounded-b-[2.5rem] rounded-t-full bg-pinkdeep ring-[10px] ring-white/20">
-            <img
-              src="/fotos/hero-1.webp"
-              alt="Maquiagem rosa com pele iluminada"
-              fetchpriority="high"
-              className="h-full w-full object-cover object-[68%_30%]"
-            />
-          </div>
-          <Selo />
         </div>
       </div>
     </section>
@@ -209,13 +178,13 @@ function Tons() {
 
         <div className="sem-scroll -mx-4 mt-10 flex gap-6 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:gap-x-9 sm:gap-y-10 sm:overflow-visible sm:px-0">
           {lista.map((p) => (
-            <Link key={p.id} to={`/produto/${p.id}`} className="group flex w-[5.5rem] shrink-0 flex-col items-center text-center sm:w-28">
+            <LinkProduto key={p.id} id={p.id} className="group flex w-[5.5rem] shrink-0 flex-col items-center text-center sm:w-28">
               <span className="rounded-full p-1.5 ring-1 ring-cream/15 transition duration-300 group-hover:ring-cream/70">
                 <Tom cor={p.tom} size={72} className="!ring-0 transition duration-300 group-hover:scale-[1.06]" />
               </span>
               <span className="mt-3.5 text-[13px] leading-tight">{p.tomNome}</span>
               <span className="mt-1 line-clamp-2 text-[11px] leading-snug text-cream/50">{p.nome}</span>
-            </Link>
+            </LinkProduto>
           ))}
         </div>
       </div>
@@ -320,9 +289,9 @@ function Depoimentos() {
                   {a.cidade && `, ${a.cidade}`}
                 </p>
                 {prod && (
-                  <Link to={`/produto/${prod.id}`} className="mt-1 text-[13px] text-pink hover:underline">
+                  <LinkProduto id={prod.id} className="mt-1 text-[13px] text-pink hover:underline">
                     {prod.nome}
-                  </Link>
+                  </LinkProduto>
                 )}
               </li>
             )

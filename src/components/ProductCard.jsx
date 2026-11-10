@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { brl, esgotado, mediaDe, parcelamento, precoFinal, temTom, useLoja } from '../store/StoreContext'
 import ProductArt from './ProductArt'
+import LinkProduto from './LinkProduto'
 import Estrelas from './Estrelas'
 import Tom from './Tom'
 import { Check, Coracao, CoracaoCheio, Sacola } from './Icons'
@@ -16,7 +16,6 @@ export default function ProductCard({ produto, prioridade = false }) {
   const fav = ehFavorito(produto.id)
   const parcela = parcelamento(fim)
   const media = mediaDe(produto.id)
-  const link = `/produto/${produto.id}`
 
   const adicionar = () => {
     if (addCarrinho(produto.id, 1) > 0) {
@@ -33,13 +32,13 @@ export default function ProductCard({ produto, prioridade = false }) {
   return (
     <article className="group flex flex-col">
       <div className="relative overflow-hidden rounded-[1.4rem] bg-blush">
-        <Link to={link} className="block aspect-[4/5] w-full" aria-label={`Ver ${produto.nome}`}>
+        <LinkProduto id={produto.id} className="block aspect-[4/5] w-full" aria-label={`Ver ${produto.nome}`}>
           <ProductArt
             produto={produto}
             prioridade={prioridade}
             className={`transition duration-700 group-hover:scale-[1.04] ${fora ? 'opacity-50 grayscale-[.4]' : ''}`}
           />
-        </Link>
+        </LinkProduto>
 
         {selo && (
           <span
@@ -78,7 +77,7 @@ export default function ProductCard({ produto, prioridade = false }) {
       </div>
 
       <div className="mt-3.5 px-1">
-        <Link to={link} className="min-w-0 text-left">
+        <LinkProduto id={produto.id} className="min-w-0 text-left">
           {temTom(produto) && produto.tomNome && (
             <p className="mb-1.5 flex items-center gap-1.5 text-[11px] text-mute">
               <Tom cor={produto.tom} size={12} />
@@ -102,7 +101,7 @@ export default function ProductCard({ produto, prioridade = false }) {
               ou {parcela.vezes}x de {brl(parcela.valor)} sem juros
             </p>
           )}
-        </Link>
+        </LinkProduto>
 
       </div>
     </article>

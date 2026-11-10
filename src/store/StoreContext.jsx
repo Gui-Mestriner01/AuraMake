@@ -3,7 +3,8 @@ import { SEED_PRODUCTS } from '../data/products'
 import { AVALIACOES } from '../data/avaliacoes'
 import { STORE } from '../config'
 
-const KEY = 'aura:loja:v2'
+// v3: descarta sacolas e dados de teste guardados pelas versões anteriores
+const KEY = 'aura:loja:v3'
 const Ctx = createContext(null)
 
 /** Produtos salvos em versões antigas tinham `image` (uma foto só): converte para `imagens[]`. */
@@ -48,6 +49,11 @@ export function StoreProvider({ children }) {
   const [sacolaAberta, setSacolaAberta] = useState(false)
   const abrirSacola = useCallback(() => setSacolaAberta(true), [])
   const fecharSacola = useCallback(() => setSacolaAberta(false), [])
+
+  // produto aberto no pop-up (cartão centralizado)
+  const [produtoAbertoId, setProdutoAbertoId] = useState(null)
+  const abrirProduto = useCallback((id) => setProdutoAbertoId(id), [])
+  const fecharProduto = useCallback(() => setProdutoAbertoId(null), [])
 
   const [toast, setToast] = useState(null)
   const relogio = useRef(null)
@@ -201,6 +207,9 @@ export function StoreProvider({ children }) {
     sacolaAberta,
     abrirSacola,
     fecharSacola,
+    produtoAbertoId,
+    abrirProduto,
+    fecharProduto,
     toast,
     avisar,
     fecharToast
